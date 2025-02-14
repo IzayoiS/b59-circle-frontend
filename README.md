@@ -1,57 +1,73 @@
+# DumbWays BootCamp Stage 2
 
-# Guidelines
+This project created for task on [DumbWays](https://dumbways.id) BootCamp Stage 2
 
-This document provides essential guidelines for consistency and better development experience.
+Circle is a frontend project built using [React](https://react.dev/), [Vite](https://vitejs.dev/), and [Chakra UI](https://chakra-ui.com/). This project is designed to provide a responsive and interactive user interface.
 
-## 1. **File & Folder Naming**
-- **File Names**: Use **kebab-case** for files and folders.
-  - Example: `my-component.tsx`, `use-fetch-data.ts`.
-  
-- **Folder Structure**: Follow a **feature-based** structure.
-  ```
-  src/
-    ├── components/   # Reusable components
-    ├── features/     # Feature-specific code
-    ├── hooks/        # Custom hooks
-    ├── services/     # API calls, data fetching
-    ├── utils/        # Helper functions
-    └── styles/       # Global styles
-  ```
+## Features
 
-## 2. **Naming Conventions**
-- **Variables**: Use **camelCase** for variables.
-  - Example: `const userName = 'John';`
-  
-- **Functions**: Use **camelCase** for function names.
-  - Example: `function fetchData() {}`, `const handleClick = () => {};`.
+- **Component-Based Architecture**: Well-structured and modular code.
+- **Styling with Chakra UI**: Ensures consistent styling and customizable themes.
+- **State Management**: Efficient state management for smooth user interactions.
+- **Routing**: Utilizes React Router for dynamic page navigation.
 
-- **Components**: Use **PascalCase** for component names.
-  - Example: `UserProfile`, `LoginForm`.
+## Prerequisites
 
-- **Props**: Use **camelCase** for prop names.
-  - Example: `const UserProfile = ({ userName, userAge }: UserProfileProps) => {};`.
+Before you begin, ensure you have the following installed on your system:
 
-## 3. **Component Functions**
-- Use `const` with arrow functions for components.
-  - Example: `const MyComponent = () => {};`.
+- [Node.js](https://nodejs.org/) (version 14 or later)
+- [npm](https://www.npmjs.com/) or [Yarn](https://yarnpkg.com/)
 
-## 4. **Custom Hooks**
-- Custom hooks should start with `use` and use **camelCase**.
-  - Example: `useFetchData`, `useUserAuthentication`.
+## Installation
 
-## 5. **Exports**
-- Always use **named exports** for components and functions.
-  - Example: `export const MyComponent = () => {};`.
+Follow these steps to set up the project locally:
 
-## 6. **CSS/Styling**
-- Use **CSS-in-JS** or **SCSS** for styles.
-- Global styles go into the `styles` folder.
+1. **Clone the repository**:
 
-## 7. **Testing**
-- Write unit tests for components and functions.
-- Use **Vitest** for testing.
-  - Example: `import { render, screen } from '@testing-library/react';`
+   ```bash
+   git clone https://github.com/IzayoiS/fs-b59-circle-frontend.git
+   cd fs-b59-circle-frontend
+   ```
 
-## 8. **Absolute Imports**
-- Use `@/` for absolute imports in the codebase.
-  - Example: `import MyComponent from '@/components/MyComponent';`
+2. **Install dependencies**:
+
+   Using npm:
+
+   ```bash
+   npm install
+   ```
+
+   Or using Yarn:
+
+   ```bash
+   yarn install
+   ```
+
+3. **Configure environment variables**:
+
+   Copy the `.env.sample` file and rename it to `.env`, then update the necessary values:
+
+   ```bash
+   cp .env.sample .env
+   ```
+
+## Running the Application
+
+To start the development server:
+
+```bash
+npm run dev
+```
+
+The application will be available at `http://localhost:5173` in your browser.
+
+## Available Scripts
+
+- **`npm run dev`**: Runs the application in development mode.
+- **`npm run build`**: Builds the application for production.
+- **`npm run preview`**: Previews the production build.
+- **`npm run lint`**: Runs the linter to check the code.
+
+## Contribution
+
+We welcome contributions from everyone. If you’d like to contribute, please fork this repository and submit a pull request with your changes.
