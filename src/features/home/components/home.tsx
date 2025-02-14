@@ -1,0 +1,17 @@
+import { Box } from '@chakra-ui/react';
+import CardThread from './card-thread';
+import CreateThread from './create-thread';
+import { postDatas } from '@/utils/fake-datas/posts';
+
+export default function Home() {
+  return (
+    <Box paddingRight={'25px'}>
+      <CreateThread />
+      <Box display={'flex'} flexDirection={'column'} gap={'10px'}>
+        {postDatas.map((postData) => (
+          <CardThread postData={postData} key={postData.id} />
+        ))}
+      </Box>
+    </Box>
+  );
+}
