@@ -1,15 +1,16 @@
+import AppLayout from '@/components/layouts/app-layout';
+import AuthLayout from '@/components/layouts/auth-layout';
 import { createBrowserRouter } from 'react-router-dom';
 import Page404 from './404';
+import FollowsPage from './follows';
 import ForgotPasswordPage from './forgot-password';
 import HomePage from './home';
 import LoginPage from './login';
+import ProfilePage from './profile';
 import RegisterPage from './register';
 import ResetPasswordPage from './reset-password';
-import AppLayout from '@/components/layouts/app-layout';
-import SearchPage from './search';
-import FollowsPage from './follows';
-import ProfilePage from './profile';
-import AuthLayout from '@/components/layouts/auth-layout';
+import SearchUsersPage from './search-users';
+import ThreadDetailPage from './thread-detail';
 
 const router = createBrowserRouter([
   {
@@ -21,7 +22,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/search',
-        element: <SearchPage />,
+        element: <SearchUsersPage />,
       },
       {
         path: '/follows',
@@ -30,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: '/profile',
         element: <ProfilePage />,
+      },
+      {
+        path: '/detail/:id',
+        element: <ThreadDetailPage />,
       },
     ],
   },

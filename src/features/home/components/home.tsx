@@ -5,7 +5,7 @@ import { postDatas } from '@/utils/fake-datas/posts';
 
 export default function Home() {
   return (
-    <Box paddingRight={'25px'}>
+    <Box>
       <CreateThread />
       <Box display={'flex'} flexDirection={'column'} gap={'10px'}>
         {postDatas.map((postData) => (

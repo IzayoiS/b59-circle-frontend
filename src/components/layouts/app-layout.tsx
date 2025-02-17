@@ -29,15 +29,15 @@ export default function AppLayout() {
   return (
     <Grid templateColumns="repeat(4,1fr)" height={'100vh'}>
       <GridItem colSpan={1}>
-        <LeftBar width={'417px'} />
+        <LeftBar width={'417px'} position={'fixed'} />
       </GridItem>
 
-      <GridItem colSpan={2}>
+      <GridItem colSpan={2} marginLeft={'30px'}>
         <Outlet />
       </GridItem>
 
-      <GridItem colSpan={1}>
-        <RightBar width={'563px'} />
+      <GridItem>
+        <RightBar width={'563px'} position={'sticky'} top={'0'} />
       </GridItem>
     </Grid>
   );
@@ -132,11 +132,11 @@ function RightBar(props: BoxProps) {
       gap={'16px'}
       borderLeft={'1px solid'}
       borderColor={'outline'}
-      padding={'45px'}
+      padding={'40px'}
       {...props}
     >
       <Card.Root backgroundColor={'card'} width={'483px'}>
-        <Card.Body gap={'2'}>
+        <Card.Body gap={'8px'}>
           <Card.Title>My Profile</Card.Title>
           <Image src={CoverProfile} />
           <Flex
@@ -169,7 +169,7 @@ function RightBar(props: BoxProps) {
           <Text color={'gray.400'} fontSize={'12px'}>
             @iqbal
           </Text>
-          <Text>Profile bio</Text>
+          <Text>Never give up</Text>
           <Flex gap={'4px'}>
             <Text>291</Text>
             <Text color={'gray.400'}>Following</Text>
@@ -180,8 +180,8 @@ function RightBar(props: BoxProps) {
       </Card.Root>
 
       <Card.Root backgroundColor={'card'} width={'483px'}>
-        <Card.Body gap={'10px'}>
-          <Text fontSize={'20px'} fontWeight={'bold'}>
+        <Card.Body gap={'7px'}>
+          <Text fontSize={'20px'} fontWeight={'bold'} marginTop={'-10px'}>
             Suggested For You
           </Text>
           <SuggestedFollowing
@@ -214,7 +214,7 @@ function RightBar(props: BoxProps) {
         <Flex
           gap={'8px'}
           direction={'row'}
-          padding={'15px 0px 10px 23px'}
+          padding={'12px 0px 10px 23px'}
           alignItems={'center'}
           color={'white'}
         >
@@ -244,7 +244,7 @@ function RightBar(props: BoxProps) {
             </Link>
           </ChakraLink>
         </Flex>
-        <Flex padding={'0px 0px 10px 23px'} direction={'row'}>
+        <Flex padding={'0px 0px 10px 23px'} direction={'row'} fontSize={'14px'}>
           <Text>Powered by</Text>
           <Image
             src={Logo}
