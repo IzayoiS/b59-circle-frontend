@@ -1,11 +1,11 @@
-import CoverProfile from '@/assets/icons/cover.svg';
+import FacebookLogo from '@/assets/icons/facebook.svg';
+import GithubLogo from '@/assets/icons/github.svg';
+import InstagramLogo from '@/assets/icons/instagram.svg';
+import LinkedinLogo from '@/assets/icons/linkedin.svg';
 import Logout from '@/assets/icons/logout.svg';
 import Logo from '@/assets/logo.svg';
-import GithubLogo from '@/assets/icons/github.svg';
-import LinkedinLogo from '@/assets/icons/linkedin.svg';
-import FacebookLogo from '@/assets/icons/facebook.svg';
-import InstagramLogo from '@/assets/icons/instagram.svg';
 import { NAV_LINK_MENU } from '@/utils/constants/nav-link-menu';
+import { isLogin } from '@/utils/fake-datas/session';
 import {
   Box,
   BoxProps,
@@ -18,10 +18,9 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { Link, Navigate, Outlet, useLocation } from 'react-router-dom';
-import { Avatar } from '../ui/avatar';
 import { Button } from '../ui/button';
+import ProfileCard from './profile-card';
 import SuggestedFollowing from './suggest-following';
-import { isLogin } from '@/utils/fake-datas/session';
 
 export default function AppLayout() {
   if (!isLogin) return <Navigate to={'/login'} />;
@@ -32,7 +31,7 @@ export default function AppLayout() {
         <LeftBar width={'417px'} position={'fixed'} />
       </GridItem>
 
-      <GridItem colSpan={2} marginLeft={'30px'}>
+      <GridItem colSpan={2} marginLeft={'-30px'}>
         <Outlet />
       </GridItem>
 
@@ -124,6 +123,10 @@ function LeftBar(props: BoxProps) {
   );
 }
 function RightBar(props: BoxProps) {
+  const location = useLocation();
+
+  const isProfilePage = location.pathname.startsWith('/profile');
+
   return (
     <Box
       height={'100vh'}
@@ -135,49 +138,7 @@ function RightBar(props: BoxProps) {
       padding={'40px'}
       {...props}
     >
-      <Card.Root backgroundColor={'card'} width={'483px'}>
-        <Card.Body gap={'8px'}>
-          <Card.Title>My Profile</Card.Title>
-          <Image src={CoverProfile} />
-          <Flex
-            justify={'space-between'}
-            alignItems={'end'}
-            marginTop={'-50px'}
-          >
-            <Avatar
-              src="https://api.dicebear.com/9.x/micah/svg?seed=iqbal"
-              width={'90px'}
-              height={'90px'}
-              border={'4px solid black'}
-              marginLeft={'20px'}
-            />
-            <Button
-              width={'106px'}
-              height={'30px'}
-              border={'1px solid white'}
-              backgroundColor={'transparent'}
-              color={'white'}
-              borderRadius={'20px'}
-              _hover={{ backgroundColor: 'gray.600', transition: 'ease 0.4s' }}
-            >
-              Edit Profile
-            </Button>
-          </Flex>
-          <Text fontSize={'24px'} fontWeight={'bold'}>
-            ✨Iqbal✨
-          </Text>
-          <Text color={'gray.400'} fontSize={'12px'}>
-            @iqbal
-          </Text>
-          <Text>Never give up</Text>
-          <Flex gap={'4px'}>
-            <Text>291</Text>
-            <Text color={'gray.400'}>Following</Text>
-            <Text>32</Text>
-            <Text color={'gray.400'}>Followers</Text>
-          </Flex>
-        </Card.Body>
-      </Card.Root>
+      {!isProfilePage && <ProfileCard username="iqbal_hasbi" />}
 
       <Card.Root backgroundColor={'card'} width={'483px'}>
         <Card.Body gap={'7px'}>

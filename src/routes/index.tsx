@@ -11,6 +11,7 @@ import RegisterPage from './register';
 import ResetPasswordPage from './reset-password';
 import SearchUsersPage from './search-users';
 import ThreadDetailPage from './thread-detail';
+import UserProfilePage from './user-profile';
 
 const router = createBrowserRouter([
   {
@@ -29,12 +30,16 @@ const router = createBrowserRouter([
         element: <FollowsPage />,
       },
       {
-        path: '/profile',
+        path: '/profile/iqbal_hasbi',
         element: <ProfilePage />,
       },
       {
         path: '/detail/:id',
         element: <ThreadDetailPage />,
+      },
+      {
+        path: '/profile/:userId',
+        element: <UserProfilePage />,
       },
     ],
   },

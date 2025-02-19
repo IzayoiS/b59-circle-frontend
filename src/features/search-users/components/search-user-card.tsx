@@ -2,8 +2,9 @@ import { Avatar } from '@/components/ui/avatar';
 import { Box, BoxProps, Button, Flex, Text } from '@chakra-ui/react';
 import { useReducer } from 'react';
 import { SearchUser } from '../types/search-user';
+import { useNavigate } from 'react-router-dom';
 
-interface SearchUserCardProps extends BoxProps {
+export interface SearchUserCardProps extends BoxProps {
   searchUserData: SearchUser;
 }
 
@@ -12,6 +13,11 @@ export default function SearchUserCard({
   ...props
 }: SearchUserCardProps) {
   const [, forceUpdate] = useReducer((state) => state + 1, 0);
+  const Navigate = useNavigate();
+
+  function goToProfile() {
+    Navigate(`/profile/${searchUserData.username}`);
+  }
 
   return (
     <Box
@@ -19,6 +25,10 @@ export default function SearchUserCard({
       gap={'16px'}
       padding={'5px 0px'}
       marginTop={'10px'}
+      onClick={goToProfile}
+      cursor={'pointer'}
+      _hover={{ backgroundColor: 'card' }}
+      borderRadius={'10px'}
       {...props}
     >
       <Avatar
@@ -51,7 +61,7 @@ export default function SearchUserCard({
             forceUpdate();
           }}
         >
-          {searchUserData.isFollowed ? 'Unfollow' : 'Follow'}
+          {searchUserData.isFollowed ? 'Following' : 'Follow'}
         </Button>
       </Flex>
     </Box>

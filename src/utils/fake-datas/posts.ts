@@ -52,6 +52,32 @@ export const postDatas: Post[] = [
     content: 'This is a sample post content.',
     likesCount: 8,
     repliesCount: 3,
+    replies: [
+      {
+        id: '8d5e8a10-1b63-11ee-be56-0242ac120002',
+        user: {
+          fullName: 'Muh. Yaumil Aksah Hamid',
+          username: 'yaumil_aksah',
+          avatarUrl:
+            'https://api.dicebear.com/9.x/notionists/svg?seed=Muh.%20Yaumil%20Aksah%20Hamid',
+        },
+        content: 'Another dummy post content.',
+        likesCount: 1,
+        createdAt: new Date(),
+      },
+      {
+        id: '8d5e8b70-1b63-11ee-be56-0242ac120002',
+        user: {
+          fullName: 'M Rizal',
+          username: 'm_rizal',
+          avatarUrl:
+            'https://api.dicebear.com/9.x/notionists/svg?seed=M%20Rizal',
+        },
+        content: 'Benar-benar menginspirasi, Endranio!',
+        likesCount: 3,
+        createdAt: new Date(),
+      },
+    ],
     isLiked: false,
     createdAt: new Date(),
   },

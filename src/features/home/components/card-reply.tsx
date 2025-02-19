@@ -1,8 +1,7 @@
-import likeLogo from '@/assets/icons/like.svg';
 import likeLogoOutline from '@/assets/icons/like-outline.svg';
+import likeLogo from '@/assets/icons/like.svg';
 import { Avatar } from '@/components/ui/avatar';
 import { Box, BoxProps, Button, Image, Text } from '@chakra-ui/react';
-import { useNavigate } from 'react-router-dom';
 import { Reply } from '../types/posts';
 
 interface CardReplyProps extends BoxProps {
@@ -10,12 +9,6 @@ interface CardReplyProps extends BoxProps {
 }
 
 export default function CardReply({ replyData }: CardReplyProps) {
-  const navigate = useNavigate();
-
-  function onClickCard() {
-    navigate(`/detail/${replyData.id}`);
-  }
-
   return (
     <Box
       display={'flex'}
@@ -35,14 +28,12 @@ export default function CardReply({ replyData }: CardReplyProps) {
 
       <Box display={'flex'} flexDirection={'column'} gap={'4px'}>
         <Box display={'flex'} gap={'4px'}>
-          <Text fontWeight={'bold'}>{replyData.user.fullName}</Text>
+          <Text fontWeight={'medium'}>{replyData.user.fullName}</Text>
           <Text color={'secondary'}>@{replyData.user.username}</Text>
           <Text color={'secondary'}>•</Text>
           <Text color={'secondary'}>{replyData.createdAt.getHours()}h</Text>
         </Box>
-        <Text cursor={'pointer'} onClick={onClickCard}>
-          {replyData.content}
-        </Text>
+        <Text fontWeight={'light'}>{replyData.content}</Text>
         <Box display={'flex'}>
           <Button
             variant={'ghost'}

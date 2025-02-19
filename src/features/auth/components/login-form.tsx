@@ -90,7 +90,7 @@ export default function LoginForm(props: BoxProps) {
           display={'flex'}
           justifyContent={'flex-end'}
         >
-          <ChakraLink asChild>
+          <ChakraLink asChild outline={'none'}>
             <Link to={'/forgot-password'}> Forgot password?</Link>
           </ChakraLink>
         </Text>
@@ -107,7 +107,7 @@ export default function LoginForm(props: BoxProps) {
       </form>
       <Text fontWeight={'normal'}>
         Don't have an account yet?{' '}
-        <ChakraLink asChild color={'brand'}>
+        <ChakraLink asChild color={'brand'} outline={'none'}>
           <Link to={'/register'}> Create account</Link>
         </ChakraLink>
       </Text>

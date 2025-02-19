@@ -7,7 +7,7 @@ export default function ThreadDetailPage() {
   const navigate = useNavigate();
 
   function onBack() {
-    navigate('/');
+    navigate(-1);
   }
 
   return (

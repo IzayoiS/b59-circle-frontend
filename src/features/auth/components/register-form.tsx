@@ -71,6 +71,18 @@ export default function RegisterForm(props: BoxProps) {
           />
           <Field.ErrorText>{errors.email?.message}</Field.ErrorText>
         </Field.Root>
+        <Field.Root invalid={!!errors.username?.message}>
+          <Input
+            placeholder="username"
+            type="username"
+            outline={'none'}
+            autoComplete="off"
+            border={'1px solid'}
+            borderColor={'outline'}
+            {...register('username')}
+          />
+          <Field.ErrorText>{errors.password?.message}</Field.ErrorText>
+        </Field.Root>
         <Field.Root invalid={!!errors.password?.message}>
           <Input
             placeholder="Password"
@@ -95,7 +107,7 @@ export default function RegisterForm(props: BoxProps) {
       </form>
       <Text fontWeight={'normal'}>
         Already have account?{' '}
-        <ChakraLink asChild color={'brand'}>
+        <ChakraLink asChild color={'brand'} outline={'none'}>
           <Link to={'/login'}> Login</Link>
         </ChakraLink>
       </Text>

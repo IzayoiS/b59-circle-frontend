@@ -83,7 +83,7 @@ export default function ForgotPasswordForm(props: BoxProps) {
       </form>
       <Text fontWeight={'normal'}>
         Already have account?{' '}
-        <ChakraLink asChild color={'brand'}>
+        <ChakraLink asChild color={'brand'} outline={'none'}>
           <Link to={'/login'}> Login</Link>
         </ChakraLink>
       </Text>

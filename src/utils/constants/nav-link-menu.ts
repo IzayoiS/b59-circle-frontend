@@ -42,7 +42,7 @@ export const NAV_LINK_MENU: NavLinkMenu[] = [
     },
   },
   {
-    path: '/profile',
+    path: '/profile/iqbal_hasbi',
     label: 'Profile',
     logo: {
       fill: ProfileLogo,

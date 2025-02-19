@@ -11,16 +11,15 @@ interface CardThreadProps extends BoxProps {
   postData: Post;
 }
 
-export default function CardThread({ postData, ...boxProps }: CardThreadProps) {
+export default function CardThreadUser({
+  postData,
+  ...boxProps
+}: CardThreadProps) {
   const navigate = useNavigate();
   const [, forceUpdate] = useReducer((state) => state + 1, 0);
 
   function onClickCard() {
     navigate(`/detail/${postData.id}`);
-  }
-
-  function goToProfile() {
-    navigate(`/profile/${postData.user.username}`);
   }
 
   return (
@@ -43,17 +42,8 @@ export default function CardThread({ postData, ...boxProps }: CardThreadProps) {
 
       <Box display={'flex'} flexDirection={'column'} gap={'4px'}>
         <Box display={'flex'} gap={'4px'}>
-          <Text
-            fontWeight={'medium'}
-            onClick={goToProfile}
-            cursor={'pointer'}
-            _hover={{ textDecoration: 'underline' }}
-          >
-            {postData.user.fullName}
-          </Text>
-          <Text color={'secondary'} onClick={goToProfile} cursor={'pointer'}>
-            @{postData.user.username}
-          </Text>
+          <Text fontWeight={'medium'}>{postData.user.fullName}</Text>
+          <Text color={'secondary'}>@{postData.user.username}</Text>
           <Text color={'secondary'}>•</Text>
           <Text color={'secondary'}>{postData.createdAt.getHours()}h</Text>
         </Box>

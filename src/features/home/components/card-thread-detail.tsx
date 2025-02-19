@@ -30,7 +30,7 @@ export default function CardThreadDetail({ postData }: CardThreadDetailProps) {
           height={'40px'}
         />
         <Box>
-          <Text fontWeight={'normal'} fontSize={'14px'}>
+          <Text fontWeight={'medium'} fontSize={'14px'}>
             {postData.user.fullName}
           </Text>
           <Text color={'secondary'} fontSize={'14px'}>
