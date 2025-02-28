@@ -1,6 +1,6 @@
-import { Post } from '@/features/home/types/posts';
+import { Thread } from '@/features/home/types/posts';
 
-export const postDatas: Post[] = [
+export const postDatas: Thread[] = [
   {
     id: '8d5e7a20-1b63-11ee-be56-0242ac120002',
     user: {
@@ -19,7 +19,7 @@ export const postDatas: Post[] = [
           fullName: 'Iqbal M Hasbi',
           username: 'iqbal_hasbi',
           avatarUrl:
-            'https://api.dicebear.com/9.x/notionists/svg?seed=Iqbal%20M%20Hasbi',
+            'https://api.dicebear.com/9.x/micah/svg?seed=Iqbal%20M%20Hasbi',
         },
         content: 'Sangat setuju! Ini adalah salah satu kutipan terbaik.',
         likesCount: 5,
@@ -47,7 +47,7 @@ export const postDatas: Post[] = [
       fullName: 'Iqbal M Hasbi',
       username: 'iqbal_hasbi',
       avatarUrl:
-        'https://api.dicebear.com/9.x/notionists/svg?seed=Iqbal%20M%20Hasbi',
+        'https://api.dicebear.com/9.x/micah/svg?seed=Iqbal%20M%20Hasbi',
     },
     content: 'This is a sample post content.',
     likesCount: 8,

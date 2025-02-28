@@ -1,8 +1,10 @@
-import { isLogin } from '@/utils/fake-datas/session';
+import Cookies from 'js-cookie';
 import { Navigate, Outlet } from 'react-router-dom';
 
 export default function AuthLayout() {
-  if (isLogin) return <Navigate to={'/'} />;
+  const token = Cookies.get('token');
+
+  if (token) return <Navigate to={'/'} />;
 
   return <Outlet />;
 }

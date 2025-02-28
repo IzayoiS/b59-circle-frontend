@@ -11,7 +11,7 @@ export const RegisterSchema = z.object({
     .max(12, { message: 'Username cannot be longer than 12 characters' }),
   password: z
     .string()
-    .min(4, { message: 'Password must be at least 4 characters long' }),
+    .min(8, { message: 'Password must be at least 8 characters long' }),
 });
 
 export type RegisterSchemaDTO = z.infer<typeof RegisterSchema>;
@@ -20,7 +20,7 @@ export const LoginSchema = z.object({
   email: z.string().email({ message: 'Invalid email format' }),
   password: z
     .string()
-    .min(4, { message: 'Password must be at least 4 characters long' }),
+    .min(8, { message: 'Password must be at least 8 characters long' }),
 });
 
 export type LoginSchemaDTO = z.infer<typeof LoginSchema>;
@@ -31,18 +31,18 @@ export const ForgotPasswordSchema = z.object({
 
 export type ForgotPasswordSchemaDTO = z.infer<typeof ForgotPasswordSchema>;
 
-export const ResetPasswordScema = z
+export const ResetPasswordSchema = z
   .object({
-    password: z
+    oldPassword: z
       .string()
-      .min(4, { message: 'Password must be at least 4 characters long' }),
-    confirmPassword: z
+      .min(8, { message: 'Password must be at least 8 characters long' }),
+    newPassword: z
       .string()
-      .min(4, { message: 'Password must be at least 4 characters long' }),
+      .min(8, { message: 'Password must be at least 8 characters long' }),
   })
-  .refine((data) => data.password === data.confirmPassword, {
+  .refine((data) => data.oldPassword === data.newPassword, {
     message: "Password don't match",
-    path: ['confirmPassword'],
+    path: ['newPassword'],
   });
 
-export type ResetPasswordScemaDTO = z.infer<typeof ResetPasswordScema>;
+export type ResetPasswordSchemaDTO = z.infer<typeof ResetPasswordSchema>;

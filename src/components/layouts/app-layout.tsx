@@ -4,8 +4,9 @@ import InstagramLogo from '@/assets/icons/instagram.svg';
 import LinkedinLogo from '@/assets/icons/linkedin.svg';
 import Logout from '@/assets/icons/logout.svg';
 import Logo from '@/assets/logo.svg';
+import { useAuthStore } from '@/stores/auth';
 import { NAV_LINK_MENU } from '@/utils/constants/nav-link-menu';
-import { isLogin } from '@/utils/fake-datas/session';
+import { searchUserDatas } from '@/utils/fake-datas/search-users';
 import {
   Box,
   BoxProps,
@@ -17,33 +18,85 @@ import {
   Image,
   Text,
 } from '@chakra-ui/react';
-import { Link, Navigate, Outlet, useLocation } from 'react-router-dom';
-import { Button } from '../ui/button';
+import {
+  Link,
+  Navigate,
+  Outlet,
+  useLocation,
+  useNavigate,
+} from 'react-router-dom';
+import CreatePost from './create-post-dialog';
 import ProfileCard from './profile-card';
 import SuggestedFollowing from './suggest-following';
+import Cookies from 'js-cookie';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '@/libs/api';
 
 export default function AppLayout() {
-  if (!isLogin) return <Navigate to={'/login'} />;
+  const {
+    user: { username },
+    setUser,
+    logout,
+  } = useAuthStore();
 
-  return (
-    <Grid templateColumns="repeat(4,1fr)" height={'100vh'}>
-      <GridItem colSpan={1}>
-        <LeftBar width={'417px'} position={'fixed'} />
-      </GridItem>
+  const { isFetched } = useQuery({
+    queryKey: ['check-auth'],
+    queryFn: async () => {
+      try {
+        const token = Cookies.get('token');
+        const response = await api.post(
+          '/auth/check',
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-      <GridItem colSpan={2} marginLeft={'-30px'}>
-        <Outlet />
-      </GridItem>
+        setUser(response.data.data);
+        return response.data;
+      } catch (error) {
+        console.log(error);
+        Cookies.remove('token');
+        logout();
+      }
+    },
+  });
 
-      <GridItem>
-        <RightBar width={'563px'} position={'sticky'} top={'0'} />
-      </GridItem>
-    </Grid>
-  );
+  if (isFetched) {
+    if (!username) return <Navigate to={'/login'} />;
+
+    return (
+      <Grid templateColumns="repeat(4,1fr)" height={'100vh'}>
+        <GridItem colSpan={1}>
+          <LeftBar width={'417px'} position={'sticky'} top={'0'} />
+        </GridItem>
+
+        <GridItem colSpan={2} marginLeft={'-30px'}>
+          <Outlet />
+        </GridItem>
+
+        <GridItem>
+          <RightBar width={'563px'} position={'sticky'} top={'0'} />
+        </GridItem>
+      </Grid>
+    );
+  }
+
+  return <></>;
 }
 
 function LeftBar(props: BoxProps) {
   const { pathname } = useLocation();
+  const { logout } = useAuthStore();
+  const navigate = useNavigate();
+
+  function onLogout() {
+    logout();
+    Cookies.remove('token');
+    navigate('/login');
+  }
 
   return (
     <Box
@@ -88,22 +141,11 @@ function LeftBar(props: BoxProps) {
           ))}
         </Box>
 
-        <Button
-          backgroundColor={'brand'}
-          color={'white'}
-          width={'337px'}
-          height={'43px'}
-          marginTop={'10px'}
-          borderRadius={'20px'}
-          fontSize={'20px'}
-        >
-          Create Post
-        </Button>
+        <CreatePost />
       </Box>
 
       <Box>
         <ChakraLink
-          asChild
           display={'flex'}
           gap={'16px'}
           padding={'14px 0px'}
@@ -112,11 +154,10 @@ function LeftBar(props: BoxProps) {
           textDecoration={'none'}
           _hover={{ backgroundColor: 'gray.800', transition: 'ease 0.3s' }}
           borderRadius={'8px'}
+          onClick={onLogout}
         >
-          <Link to={'/login'}>
-            <Image src={Logout} />
-            <Text>Logout</Text>
-          </Link>
+          <Image src={Logout} />
+          <Text>Logout</Text>
         </ChakraLink>
       </Box>
     </Box>
@@ -124,6 +165,7 @@ function LeftBar(props: BoxProps) {
 }
 function RightBar(props: BoxProps) {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isProfilePage = location.pathname.startsWith('/profile');
 
@@ -138,37 +180,27 @@ function RightBar(props: BoxProps) {
       padding={'40px'}
       {...props}
     >
-      {!isProfilePage && <ProfileCard username="iqbal_hasbi" />}
+      {!isProfilePage && <ProfileCard />}
 
       <Card.Root backgroundColor={'card'} width={'483px'}>
         <Card.Body gap={'7px'}>
-          <Text fontSize={'20px'} fontWeight={'bold'} marginTop={'-10px'}>
+          <Text
+            fontSize={'20px'}
+            fontWeight={'bold'}
+            margin={'-10px 0px 10px 10px'}
+          >
             Suggested For You
           </Text>
-          <SuggestedFollowing
-            name="Naruto Uzumaki"
-            username="@naruto"
-            initialFollowing={true}
-            profilLogo="naruto"
-          />
-          <SuggestedFollowing
-            name="Sasuke Uchiha"
-            username="@sasuke"
-            initialFollowing={false}
-            profilLogo="sasuke"
-          />
-          <SuggestedFollowing
-            name="Anos Voldigoad"
-            username="@anos"
-            initialFollowing={false}
-            profilLogo="anos"
-          />
-          <SuggestedFollowing
-            name="Rimuru Tempest"
-            username="@rimuru"
-            initialFollowing={false}
-            profilLogo="rimuru"
-          />
+          {searchUserDatas
+            .filter((user) => user.username !== 'iqbal_hasbi')
+            .slice(0, 5)
+            .map((user) => (
+              <SuggestedFollowing
+                key={user.id}
+                SuggestedFollowingUser={user}
+                goToProfile={(username) => navigate(`/profile/${username}`)}
+              />
+            ))}
         </Card.Body>
       </Card.Root>
       <Card.Root backgroundColor={'card'} width={'483px'}>

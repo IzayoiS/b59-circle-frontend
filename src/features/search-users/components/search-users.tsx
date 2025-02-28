@@ -1,40 +1,37 @@
 import SearchLogoOutline from '@/assets/icons/user-search-outline.svg';
 import { InputGroup } from '@/components/ui/input-group';
-import { searchUserDatas } from '@/utils/fake-datas/search-users';
-import { Box, Flex, Image, Input, Text } from '@chakra-ui/react';
+import { Box, Flex, Image, Input, Spinner, Text } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { SearchUser } from '../types/search-user';
 import SearchUserCard from './search-user-card';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '@/libs/api';
 
 export default function SearchUsers() {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [searchText, setSearchText] = useState<string>('');
   const [searchTextDebounced] = useDebounce(searchText, 500);
-  const [searchUserDataInterval, setSearchUserDataInterval] = useState<
-    SearchUser[]
-  >([]);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setSearchText(e.target.value);
   }
 
-  function getSearchUserDatas() {
-    setTimeout(() => {
-      setSearchUserDataInterval(searchUserDatas);
-      setIsLoading(false);
-    }, 1500);
-  }
-
-  const filteredUsers = searchUserDataInterval.filter((user) =>
-    user.fullName
-      .toLowerCase()
-      .includes(searchTextDebounced.toLowerCase().trim())
-  );
+  const {
+    data: users = [],
+    isLoading,
+    refetch,
+  } = useQuery<SearchUser[]>({
+    queryKey: ['search-users'],
+    queryFn: async () => {
+      const response = await api.get(`/users?search=${searchTextDebounced}`);
+      return response.data;
+    },
+    enabled: !!searchTextDebounced,
+  });
 
   useEffect(() => {
-    getSearchUserDatas();
-  }, []);
+    refetch();
+  }, [searchTextDebounced, refetch]);
 
   return (
     <Box padding={'30px 20px'}>
@@ -85,14 +82,27 @@ export default function SearchUsers() {
         </Flex>
       )}
 
-      {searchTextDebounced &&
-        !isLoading &&
-        filteredUsers.length > 0 &&
-        filteredUsers.map((user) => (
-          <SearchUserCard searchUserData={user} key={user.id} />
-        ))}
+      {/* {isLoading ? (
+        <Spinner />
+      ) : (
+        <>
+          {users?.map((user) => (
+            <SearchUserCard searchUserData={user} key={user.id} />
+          ))}
+        </>
+      )} */}
 
-      {searchTextDebounced && !isLoading && filteredUsers.length === 0 && (
+      {isLoading && <Spinner />}
+
+      {searchTextDebounced && users.length > 0 && (
+        <Box marginTop={'20px'}>
+          {users.map((user) => (
+            <SearchUserCard searchUserData={user} key={user.id} />
+          ))}
+        </Box>
+      )}
+
+      {searchTextDebounced && !isLoading && users?.length === 0 && (
         <Flex
           justify={'center'}
           direction={'column'}

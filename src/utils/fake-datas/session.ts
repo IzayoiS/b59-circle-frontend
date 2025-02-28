@@ -1,4 +1,4 @@
-export const isLogin: boolean = true;
+export const isLogin: boolean = false;
 
 interface UserSession {
   fullName: string;
@@ -11,13 +11,12 @@ interface UserSession {
 }
 
 export const userSession: UserSession = {
-  fullName: 'Cintara Surya Elidanto',
-  username: 'suryaelidanto',
+  fullName: 'Iqbal Muhammad Hasbi',
+  username: 'iqbal_hasbi',
   backgroundUrl:
-    'https://api.dicebear.com/9.x/glass/svg?seed=Cintara Surya Elidanto',
-  avatarUrl:
-    'https://api.dicebear.com/9.x/notionists/svg?seed=Cintara Surya Elidanto',
-  followersCount: 1001,
-  followingsCount: 0,
-  bio: "I'm fullstack developer 😎👍",
+    'https://api.dicebear.com/9.x/micah/svg?seed=Iqbal%20M%20Hasbi',
+  avatarUrl: 'https://api.dicebear.com/9.x/micah/svg?seed=Iqbal%20M%20Hasbi',
+  followersCount: 102,
+  followingsCount: 41,
+  bio: 'Lover of books and deep conversations.',
 };

@@ -26,7 +26,7 @@ export default function UserProfilePage() {
         >
           <Image src={arrowLeftLogo} width={'27px'} />
         </Button>
-        <Text fontSize={'2xl'}>{user?.fullName}</Text>
+        <Text fontSize={'2xl'}>{user?.profile.fullName}</Text>
       </Box>
       <UserProfile />
     </Box>

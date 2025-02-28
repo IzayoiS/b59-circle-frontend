@@ -1,22 +1,19 @@
 import CoverProfile from '@/assets/icons/cover.svg';
+import EditProfile from '@/components/layouts/edit-profile';
 import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import CardThreadProfile from '@/features/home/components/card-thread-profile';
+import { useAuthStore } from '@/stores/auth';
 import { postDatas } from '@/utils/fake-datas/posts';
-import { searchUserDatas } from '@/utils/fake-datas/search-users';
 import { Box, Flex, Image, Text } from '@chakra-ui/react';
 
-interface ProfileProps {
-  username: string;
-}
+export default function Profile() {
+  const {
+    username,
+    profile: { followersCount, followingsCount, fullName, avatarUrl, bio },
+  } = useAuthStore((state) => state.user);
 
-export default function Profile({ username }: ProfileProps) {
-  const user = searchUserDatas.find((u) => u.username === username);
-
-  const userId = 'iqbal_hasbi';
-  // const { userId } = useParams<{ userId: string }>();
-
-  const userPosts = postDatas.filter((post) => post.user.username === userId);
+  const userPosts = postDatas.filter((post) => post.user.username);
 
   return (
     <Box
@@ -29,12 +26,15 @@ export default function Profile({ username }: ProfileProps) {
       padding={'30px'}
     >
       <Text fontSize={'28px'} fontWeight={'medium'}>
-        ✨{user?.fullName}✨
+        ✨{fullName}✨
       </Text>
       <Image src={CoverProfile} />
       <Flex justify={'space-between'} alignItems={'end'} marginTop={'-60px'}>
         <Avatar
-          src={user?.avatarUrl}
+          src={
+            avatarUrl ||
+            `https://api.dicebear.com/9.x/micah/svg?seed=${fullName}`
+          }
           width={'100px'}
           height={'100px'}
           border={'2px solid black'}
@@ -53,30 +53,32 @@ export default function Profile({ username }: ProfileProps) {
             transition: 'ease 0.4s',
           }}
         >
-          Edit Profile
+          <EditProfile />
         </Button>
       </Flex>
       <Text fontSize={'24px'} fontWeight={'bold'}>
-        ✨{user?.fullName}✨
+        ✨{fullName}✨
       </Text>
       <Text color={'gray.400'} fontSize={'12px'}>
-        @{user?.username}
+        @{username}
       </Text>
-      <Text>{user?.bio || 'No bio available'}</Text>
+      <Text>{bio || 'No bio available'}</Text>
       <Flex gap={'4px'}>
-        <Text>291</Text>
+        <Text>{followingsCount}</Text>
         <Text color={'gray.400'}>Following</Text>
-        <Text>32</Text>
+        <Text>{followersCount}</Text>
         <Text color={'gray.400'}>Followers</Text>
       </Flex>
       {userPosts.length > 0 ? (
-        userPosts.map((postData) => (
-          <CardThreadProfile
-            margin={'0px -30px 0px -30px'}
-            key={postData.id}
-            postData={postData}
-          />
-        ))
+        userPosts
+          .filter((user) => user.user.username == 'iqbal_hasbi')
+          .map((postData) => (
+            <CardThreadProfile
+              margin={'0px -30px 0px -30px'}
+              key={postData.id}
+              postData={postData}
+            />
+          ))
       ) : (
         <Text>No posts yet.</Text>
       )}

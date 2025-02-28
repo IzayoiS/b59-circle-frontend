@@ -7,6 +7,9 @@ const config = defineConfig({
         brand: {
           value: '#04A51E',
         },
+        brandSoft: {
+          value: '#005E0E',
+        },
         secondary: {
           value: '#909090',
         },

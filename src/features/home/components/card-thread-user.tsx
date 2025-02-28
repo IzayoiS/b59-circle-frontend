@@ -5,10 +5,10 @@ import { Avatar } from '@/components/ui/avatar';
 import { Box, BoxProps, Button, Image, Text } from '@chakra-ui/react';
 import { useReducer } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Post } from '../types/posts';
+import { Thread } from '../types/posts';
 
 interface CardThreadProps extends BoxProps {
-  postData: Post;
+  postData: Thread;
 }
 
 export default function CardThreadUser({

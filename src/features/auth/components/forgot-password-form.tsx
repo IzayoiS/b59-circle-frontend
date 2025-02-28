@@ -1,10 +1,6 @@
 import Logo from '@/assets/logo.svg';
 import { Button } from '@/components/ui/button';
 import {
-  ForgotPasswordSchema,
-  ForgotPasswordSchemaDTO,
-} from '@/utils/schemas/auth.schemas';
-import {
   Box,
   BoxProps,
   Link as ChakraLink,
@@ -13,43 +9,12 @@ import {
   Input,
   Text,
 } from '@chakra-ui/react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Link, useSearchParams } from 'react-router-dom';
-import dummyUsers from '@/utils/fake-datas/user.json';
-import { useForm } from 'react-hook-form';
-import { toaster } from '@/components/ui/toaster';
+import { Link } from 'react-router-dom';
+import { useForgotPasswordForm } from '../hooks/use-forgot-password-form';
 
 export default function ForgotPasswordForm(props: BoxProps) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<ForgotPasswordSchemaDTO>({
-    mode: 'onChange',
-    resolver: zodResolver(ForgotPasswordSchema),
-  });
-
-  const [searchParams] = useSearchParams();
-
-  const email = searchParams.get('email');
-
-  function onSubmit(data: ForgotPasswordSchemaDTO) {
-    const user = dummyUsers.find((dummyUser) => dummyUser.email === email);
-
-    if (!user) {
-      return toaster.create({
-        title: 'email is wrong',
-        type: 'error',
-      });
-    }
-
-    toaster.create({
-      title: 'Link has been sent!',
-      type: 'success',
-    });
-
-    console.log(data);
-  }
+  const { errors, handleSubmit, isPending, onSubmit, register } =
+    useForgotPasswordForm();
 
   return (
     <Box display={'flex'} flexDirection={'column'} gap={'12px'} {...props}>
@@ -77,8 +42,9 @@ export default function ForgotPasswordForm(props: BoxProps) {
           borderRadius={'20px'}
           fontSize={'20px'}
           type="submit"
+          disabled={isPending ? true : false}
         >
-          Send Intruction
+          {isPending ? 'Loading...' : 'Send'}
         </Button>
       </form>
       <Text fontWeight={'normal'}>

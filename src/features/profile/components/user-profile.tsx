@@ -11,8 +11,6 @@ export default function UserProfile() {
   const { userId } = useParams<{ userId: string }>();
 
   const user = searchUserDatas.find((u) => u.username === userId);
-  console.log(user);
-
   const userPosts = postDatas.filter((post) => post.user.username === userId);
 
   return (
@@ -26,12 +24,12 @@ export default function UserProfile() {
       padding={'30px'}
     >
       <Text fontSize={'28px'} fontWeight={'medium'}>
-        ✨{user?.fullName}✨
+        ✨{user?.profile.fullName}✨
       </Text>
       <Image src={CoverProfile} />
       <Flex justify={'space-between'} alignItems={'end'} marginTop={'-60px'}>
         <Avatar
-          src={user?.avatarUrl}
+          src={user?.profile.avatarUrl || ''}
           width={'100px'}
           height={'100px'}
           border={'2px solid black'}
@@ -54,12 +52,12 @@ export default function UserProfile() {
         </Button>
       </Flex>
       <Text fontSize={'24px'} fontWeight={'bold'}>
-        ✨{user?.fullName}✨
+        ✨{user?.profile.fullName}✨
       </Text>
       <Text color={'gray.400'} fontSize={'12px'}>
         @{user?.username}
       </Text>
-      <Text>{user?.bio || 'No bio available'}</Text>
+      <Text>{user?.profile.bio || 'No bio available'}</Text>
       <Flex gap={'4px'}>
         <Text>291</Text>
         <Text color={'gray.400'}>Following</Text>

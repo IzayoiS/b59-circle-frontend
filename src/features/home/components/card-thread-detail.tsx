@@ -3,11 +3,11 @@ import replyLogoOutline from '@/assets/icons/reply-outline.svg';
 import likeLogoOutline from '@/assets/icons/like-outline.svg';
 import { Avatar } from '@/components/ui/avatar';
 import { Box, BoxProps, Button, Flex, Image, Text } from '@chakra-ui/react';
-import { Post } from '../types/posts';
+import { Thread } from '../types/posts';
 import { formatDate, formatTime } from '@/utils/format-date';
 
 interface CardThreadDetailProps extends BoxProps {
-  postData: Post;
+  postData: Thread;
 }
 
 export default function CardThreadDetail({ postData }: CardThreadDetailProps) {

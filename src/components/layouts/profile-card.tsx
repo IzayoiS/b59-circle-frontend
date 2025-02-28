@@ -1,15 +1,14 @@
 import CoverProfile from '@/assets/icons/cover.svg';
 import { Card, Flex, Image, Text } from '@chakra-ui/react';
 import { Avatar } from '../ui/avatar';
-import { Button } from '../ui/button';
-import { searchUserDatas } from '@/utils/fake-datas/search-users';
+import EditProfile from './edit-profile';
+import { useAuthStore } from '@/stores/auth';
 
-interface ProfileCardProps {
-  username: string;
-}
-
-export default function ProfileCard({ username }: ProfileCardProps) {
-  const user = searchUserDatas.find((u) => u.username === username);
+export default function ProfileCard() {
+  const {
+    username,
+    profile: { followersCount, followingsCount, fullName, avatarUrl, bio },
+  } = useAuthStore((state) => state.user);
 
   return (
     <Card.Root backgroundColor={'card'} width={'483px'}>
@@ -18,35 +17,28 @@ export default function ProfileCard({ username }: ProfileCardProps) {
         <Image src={CoverProfile} />
         <Flex justify={'space-between'} alignItems={'end'} marginTop={'-50px'}>
           <Avatar
-            src={user?.avatarUrl}
+            src={
+              avatarUrl ||
+              `https://api.dicebear.com/9.x/micah/svg?seed=${fullName}`
+            }
             width={'90px'}
             height={'90px'}
             border={'4px solid black'}
             marginLeft={'20px'}
           />
-          <Button
-            width={'106px'}
-            height={'30px'}
-            border={'1px solid white'}
-            backgroundColor={'transparent'}
-            color={'white'}
-            borderRadius={'20px'}
-            _hover={{ backgroundColor: 'gray.600', transition: 'ease 0.4s' }}
-          >
-            Edit Profile
-          </Button>
+          <EditProfile />
         </Flex>
         <Text fontSize={'24px'} fontWeight={'bold'}>
-          ✨{user?.fullName}✨
+          ✨{fullName}✨
         </Text>
         <Text color={'gray.400'} fontSize={'12px'}>
-          {user?.username}
+          @{username}
         </Text>
-        <Text>{user?.bio || 'No bio available'}</Text>
+        <Text>{bio || 'No bio available'}</Text>
         <Flex gap={'4px'}>
-          <Text>291</Text>
+          <Text>{followingsCount}</Text>
           <Text color={'gray.400'}>Following</Text>
-          <Text>32</Text>
+          <Text>{followersCount}</Text>
           <Text color={'gray.400'}>Followers</Text>
         </Flex>
       </Card.Body>
