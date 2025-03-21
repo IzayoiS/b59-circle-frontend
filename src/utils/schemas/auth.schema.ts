@@ -16,12 +16,20 @@ export const RegisterSchema = z.object({
 
 export type RegisterSchemaDTO = z.infer<typeof RegisterSchema>;
 
-export const LoginSchema = z.object({
-  email: z.string().email({ message: 'Invalid email format' }),
-  password: z
-    .string()
-    .min(8, { message: 'Password must be at least 8 characters long' }),
-});
+export const LoginSchema = z
+  .object({
+    identifier: z.string().min(4, { message: 'Must be at least 4 characters' }),
+    password: z
+      .string()
+      .min(8, { message: 'Password must be at least 8 characters long' }),
+  })
+  .refine(
+    (data) => data.identifier.includes('@') || data.identifier.length >= 4,
+    {
+      message: 'Must be a valid email or username',
+      path: ['identifier'],
+    }
+  );
 
 export type LoginSchemaDTO = z.infer<typeof LoginSchema>;
 

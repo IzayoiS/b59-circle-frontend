@@ -1,17 +1,17 @@
 import SearchUserCard from '@/features/search-users/components/search-user-card';
-import { searchUserDatas } from '@/utils/fake-datas/search-users';
 import { Tabs, Text } from '@chakra-ui/react';
 import { useState } from 'react';
+import { useFollowers, useFollowings } from '../hooks/useFollowService';
+import { defaultProfile } from '@/entities/profile.entity';
 
 export default function Follows() {
   const [value, setValue] = useState<string | null>('followers');
 
-  const randomFollowers = shuffleArray(searchUserDatas);
-  const following = searchUserDatas.filter((user) => user.isFollowed);
+  const { data: followersData } = useFollowers();
+  const { data: followingsData } = useFollowings();
 
-  function shuffleArray<T>(array: T[]): T[] {
-    return [...array].sort(() => Math.random() - 0.5);
-  }
+  console.log('Followers Data:', followersData);
+  console.log('Followings Data:', followingsData);
 
   return (
     <Tabs.Root
@@ -39,20 +39,45 @@ export default function Follows() {
       </Tabs.List>
 
       <Tabs.Content value="followers">
-        {randomFollowers.length > 0 ? (
-          randomFollowers.map((user) => (
-            <SearchUserCard key={user.id} searchUserData={user} />
-          ))
+        {Array.isArray(followersData?.followers) &&
+        followersData.followers.length > 0 ? (
+          followersData.followers.map(({ following, isFollowed, id }) =>
+            following?.id ? (
+              <SearchUserCard
+                key={`follower-${following.id}`}
+                searchUserData={{
+                  ...following,
+                  isFollowed,
+                  followedId: id,
+
+                  profile: { ...defaultProfile, ...following.profile },
+                }}
+                isFollowersList={true}
+              />
+            ) : null
+          )
         ) : (
           <Text>No followers yet.</Text>
         )}
       </Tabs.Content>
 
       <Tabs.Content value="following">
-        {following.length > 0 ? (
-          following.map((user) => (
-            <SearchUserCard key={user.id} searchUserData={user} />
-          ))
+        {Array.isArray(followingsData?.followings) &&
+        followingsData.followings.length > 0 ? (
+          followingsData.followings.map(({ followed, isFollowed, id }) =>
+            followed?.id ? (
+              <SearchUserCard
+                key={`following-${followed.id}`}
+                searchUserData={{
+                  ...followed,
+                  isFollowed,
+                  followedId: id,
+                  profile: { ...defaultProfile, ...followed.profile },
+                }}
+                isFollowingList={true}
+              />
+            ) : null
+          )
         ) : (
           <Text>You are not following anyone yet.</Text>
         )}

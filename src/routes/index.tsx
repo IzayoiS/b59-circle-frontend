@@ -30,15 +30,15 @@ const router = createBrowserRouter([
         element: <FollowsPage />,
       },
       {
-        path: '/profile/iqbal_hasbi',
+        path: '/profile',
         element: <ProfilePage />,
       },
       {
-        path: '/detail/:id',
+        path: '/detail/:threadId',
         element: <ThreadDetailPage />,
       },
       {
-        path: '/profile/:userId',
+        path: '/profile/:username',
         element: <UserProfilePage />,
       },
     ],

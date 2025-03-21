@@ -24,7 +24,14 @@ export default function Home() {
       <CreateThread />
       {isError && <Text color={'red'}>{failureReason?.message}</Text>}
       {isLoading ? (
-        <Box display={'flex'} flexDirection={'column'} gap={'10px'}>
+        <Box
+          display={'flex'}
+          flexDirection={'column'}
+          gap={'10px'}
+          justifyContent={'center'}
+          alignItems={'center'}
+          height={'80vh'}
+        >
           <Spinner />
         </Box>
       ) : (

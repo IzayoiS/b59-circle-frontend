@@ -44,7 +44,7 @@ export function useRegisterForm() {
     onError: (error) => {
       if (isAxiosError(error)) {
         return toaster.create({
-          title: error.response?.data.message,
+          title: error.response?.data.error.message,
           type: 'error',
         });
       }
@@ -64,22 +64,8 @@ export function useRegisterForm() {
   });
 
   async function onSubmit(data: RegisterSchemaDTO) {
-    try {
-      await mutateAsync(data);
-      reset();
-    } catch (error) {
-      if (isAxiosError(error)) {
-        toaster.create({
-          title: error.response?.data.message,
-          type: 'error',
-        });
-      } else {
-        toaster.create({
-          title: 'Something went wrong!',
-          type: 'error',
-        });
-      }
-    }
+    await mutateAsync(data);
+    reset();
   }
 
   return {

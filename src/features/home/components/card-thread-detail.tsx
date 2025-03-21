@@ -1,16 +1,36 @@
+import likeLogoOutline from '@/assets/icons/like-outline.svg';
 import likeLogo from '@/assets/icons/like.svg';
 import replyLogoOutline from '@/assets/icons/reply-outline.svg';
-import likeLogoOutline from '@/assets/icons/like-outline.svg';
 import { Avatar } from '@/components/ui/avatar';
+import { useLike } from '@/hooks/useLike';
+import { formatDate, formatTime } from '@/utils/format-date';
+import {
+  CreateLikeSchemaDTO,
+  DeleteLikeSchemaDTO,
+} from '@/utils/schemas/like.schema';
 import { Box, BoxProps, Button, Flex, Image, Text } from '@chakra-ui/react';
 import { Thread } from '../types/posts';
-import { formatDate, formatTime } from '@/utils/format-date';
 
 interface CardThreadDetailProps extends BoxProps {
-  postData: Thread;
+  postData?: Thread;
 }
 
 export default function CardThreadDetail({ postData }: CardThreadDetailProps) {
+  const createdAt = postData?.createdAt
+    ? new Date(postData.createdAt)
+    : new Date();
+
+  const { isPendingLike, isPendingUnlike, mutateLike, mutateUnlike } =
+    useLike();
+
+  async function onLike(data: CreateLikeSchemaDTO) {
+    await mutateLike(data);
+  }
+
+  async function onUnlike(data: DeleteLikeSchemaDTO) {
+    await mutateUnlike(data);
+  }
+
   return (
     <Box
       display={'flex'}
@@ -22,8 +42,11 @@ export default function CardThreadDetail({ postData }: CardThreadDetailProps) {
     >
       <Box display={'flex'} gap={'16px'}>
         <Avatar
-          name={postData.user.fullName}
-          src={postData.user.avatarUrl}
+          name={postData?.user.profile.fullName}
+          src={
+            postData?.user.avatarUrl ||
+            `https://api.dicebear.com/9.x/micah/svg?seed=${postData?.user.profile.fullName}`
+          }
           shape="full"
           size="full"
           width={'40px'}
@@ -31,21 +54,28 @@ export default function CardThreadDetail({ postData }: CardThreadDetailProps) {
         />
         <Box>
           <Text fontWeight={'medium'} fontSize={'14px'}>
-            {postData.user.fullName}
+            {postData?.user.profile.fullName}
           </Text>
           <Text color={'secondary'} fontSize={'14px'}>
-            @{postData.user.username}
+            @{postData?.user.username}
           </Text>
         </Box>
       </Box>
 
       <Box display={'flex'} flexDirection={'column'} gap={'4px'}>
-        <Text fontWeight={'light'}>{postData.content}</Text>
-
+        <Text fontWeight={'light'}>{postData?.content}</Text>
+        <Image
+          objectFit={'contain'}
+          maxHeight={'300px'}
+          maxWidth={'300px'}
+          src={postData?.images}
+          margin={'8px 0px 8px 0px'}
+          borderRadius={'5px'}
+        />
         <Flex align={'center'} gap={'5px'} marginTop={'10px'}>
-          <Text color={'secondary'}>{formatTime(postData.createdAt)}</Text>
+          <Text color={'secondary'}>{formatTime(createdAt)}</Text>
           <Text color={'secondary'}>•</Text>
-          <Text color={'secondary'}>{formatDate(postData.createdAt)}</Text>
+          <Text color={'secondary'}>{formatDate(createdAt)}</Text>
         </Flex>
 
         <Box display={'flex'} gap={'10px'}>
@@ -63,12 +93,18 @@ export default function CardThreadDetail({ postData }: CardThreadDetailProps) {
                 color: 'red.400',
               },
             }}
+            onClick={() =>
+              postData?.isLiked
+                ? onUnlike({ threadId: postData?.id as string })
+                : onLike({ threadId: postData?.id as string })
+            }
+            disabled={isPendingLike || isPendingUnlike}
           >
             <Image
-              src={postData.isLiked ? likeLogo : likeLogoOutline}
+              src={postData?.isLiked ? likeLogo : likeLogoOutline}
               width={'27px'}
             />
-            <Text color={'secondary'}>{postData.likesCount}</Text>
+            <Text color={'secondary'}>{postData?.likesCount}</Text>
           </Button>
 
           <Button
@@ -88,7 +124,7 @@ export default function CardThreadDetail({ postData }: CardThreadDetailProps) {
             }}
           >
             <Image src={replyLogoOutline} width={'27px'} />
-            <Text color={'secondary'}>{postData.repliesCount}</Text>
+            <Text color={'secondary'}>{postData?.repliesCount}</Text>
             <Text color={'secondary'}>Replies</Text>
           </Button>
         </Box>

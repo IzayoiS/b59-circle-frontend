@@ -11,8 +11,6 @@ export const searchUserDatas: SearchUser[] = [
     profile: {
       id: '8d5e7a20-1b63-11ee-be56-0242ac120002',
       fullName: '08 Endranio Palupi',
-      followersCount: 150,
-      followingsCount: 100,
       avatarUrl:
         'https://api.dicebear.com/9.x/micah/svg?seed=08%20Endranio%20Palupi',
       bannerUrl: null,
@@ -32,8 +30,6 @@ export const searchUserDatas: SearchUser[] = [
     profile: {
       id: '8d5e7b90-1b63-11ee-be56-0242ac120003',
       fullName: 'Iqbal M Hasbi',
-      followersCount: 230,
-      followingsCount: 180,
       avatarUrl:
         'https://api.dicebear.com/9.x/micah/svg?seed=Iqbal%20M%20Hasbi',
       bannerUrl: null,
@@ -53,8 +49,6 @@ export const searchUserDatas: SearchUser[] = [
     profile: {
       id: '8d5e7cf0-1b63-11ee-be56-0242ac120004',
       fullName: 'M Rizal',
-      followersCount: 120,
-      followingsCount: 80,
       avatarUrl: 'https://api.dicebear.com/9.x/micah/svg?seed=M%20Rizal',
       bannerUrl: null,
       bio: 'Traveler and photographer.',
@@ -73,8 +67,6 @@ export const searchUserDatas: SearchUser[] = [
     profile: {
       id: '8d5e7e50-1b63-11ee-be56-0242ac120005',
       fullName: 'Muh. Yaumil Aksah Hamid',
-      followersCount: 300,
-      followingsCount: 150,
       avatarUrl:
         'https://api.dicebear.com/9.x/micah/svg?seed=Muh.%20Yaumil%20Aksah%20Hamid',
       bannerUrl: null,
@@ -94,8 +86,6 @@ export const searchUserDatas: SearchUser[] = [
     profile: {
       id: '8d5e7fba-1b63-11ee-be56-0242ac120006',
       fullName: 'Muhammad Alfiandi Rizki',
-      followersCount: 90,
-      followingsCount: 50,
       avatarUrl:
         'https://api.dicebear.com/9.x/micah/svg?seed=Muhammad%20Alfiandi%20Rizki',
       bannerUrl: null,

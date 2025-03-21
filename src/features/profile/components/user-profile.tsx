@@ -1,21 +1,52 @@
 import CoverProfile from '@/assets/icons/cover.svg';
 import { Avatar } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import CardThreadUser from '@/features/home/components/card-thread-user';
-import { postDatas } from '@/utils/fake-datas/posts';
-import { searchUserDatas } from '@/utils/fake-datas/search-users';
-import { Box, Flex, Image, Text } from '@chakra-ui/react';
+import FollowButton from '@/features/follows/components/follow-button';
+// import CardThreadUser from '@/features/home/components/card-thread-user';
+import { api } from '@/libs/api';
+import {
+  Box,
+  // Button
+  Flex,
+  Image,
+  Text,
+} from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import { useParams } from 'react-router-dom';
 
 export default function UserProfile() {
-  const { userId } = useParams<{ userId: string }>();
+  const { username } = useParams<{ username: string }>();
 
-  const user = searchUserDatas.find((u) => u.username === userId);
-  const userPosts = postDatas.filter((post) => post.user.username === userId);
+  const { data: user, refetch } = useQuery({
+    queryKey: ['user-profile', username],
+    queryFn: async () => {
+      const res = await api.get(`/users/username/${username}`);
+      return res.data;
+    },
+    enabled: !!username,
+  });
+  const handleFollowChange = async () => {
+    await refetch();
+  };
+
+  // const { data: userPosts = [] } = useQuery({
+  //   queryKey: ['user-posts', user?.id],
+  //   queryFn: async () => {
+  //     const res = await api.get(`/posts?userId=${user?.id}`);
+  //     return res.data;
+  //   },
+  //   enabled: !!user?.id,
+  // });
+
+  if (!user) {
+    return (
+      <Flex justify="center" direction="column" align="center" height="80vh">
+        <Text fontSize="20px">User not found</Text>
+      </Flex>
+    );
+  }
 
   return (
     <Box
-      height={'100vh'}
       display={'flex'}
       flexDirection={'column'}
       gap={'16px'}
@@ -29,27 +60,21 @@ export default function UserProfile() {
       <Image src={CoverProfile} />
       <Flex justify={'space-between'} alignItems={'end'} marginTop={'-60px'}>
         <Avatar
-          src={user?.profile.avatarUrl || ''}
+          src={
+            user?.profile.avatarUrl ||
+            `https://api.dicebear.com/9.x/micah/svg?seed=${user.profile.fullName}`
+          }
           width={'100px'}
           height={'100px'}
           border={'2px solid black'}
           marginLeft={'20px'}
         />
-        <Button
-          width={'106px'}
-          height={'30px'}
-          border={'1px solid white'}
-          backgroundColor={'transparent'}
-          color={'white'}
-          top={'-11px'}
-          borderRadius={'20px'}
-          _hover={{
-            backgroundColor: 'gray.600',
-            transition: 'ease 0.4s',
-          }}
-        >
-          Edit Profile
-        </Button>
+        <FollowButton
+          followsData={user}
+          key={user.id}
+          isFollowingList={true}
+          onFollowChange={handleFollowChange}
+        />
       </Flex>
       <Text fontSize={'24px'} fontWeight={'bold'}>
         ✨{user?.profile.fullName}✨
@@ -59,13 +84,13 @@ export default function UserProfile() {
       </Text>
       <Text>{user?.profile.bio || 'No bio available'}</Text>
       <Flex gap={'4px'}>
-        <Text>291</Text>
-        <Text color={'gray.400'}>Following</Text>
-        <Text>32</Text>
+        <Text>{user?.followersCount}</Text>
         <Text color={'gray.400'}>Followers</Text>
+        <Text>{user?.followingsCount}</Text>
+        <Text color={'gray.400'}>Following</Text>
       </Flex>
 
-      {userPosts.length > 0 ? (
+      {/* {userPosts.length > 0 ? (
         userPosts.map((postData) => (
           <CardThreadUser
             margin={'0px -30px 0px -30px'}
@@ -75,7 +100,7 @@ export default function UserProfile() {
         ))
       ) : (
         <Text>No posts yet.</Text>
-      )}
+      )} */}
     </Box>
   );
 }

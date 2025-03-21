@@ -1,27 +1,30 @@
 import galleryAddLogo from '@/assets/icons/gallery-add.svg';
 import { Avatar } from '@/components/ui/avatar';
 import { toaster } from '@/components/ui/toaster';
-import { ThreadResponse } from '@/features/thread/dto/thread';
 import { api } from '@/libs/api';
 import { useAuthStore } from '@/stores/auth';
 import {
-  createThreadSchema,
-  CreateThreadSchemaDTO,
-} from '@/utils/schemas/thread.schema';
+  createReplySchema,
+  CreateReplySchemaDTO,
+} from '@/utils/schemas/reply.schema';
 import { Box, Button, Field, Image, Input, Spinner } from '@chakra-ui/react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { isAxiosError } from 'axios';
 import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import { useParams } from 'react-router-dom';
+import { RepliesResponse } from '../types/replies';
 import { TextareaWithAutoHeight } from './TextareaWithAutoHeight';
 
-export default function CreateThread() {
+export default function CreateReply() {
   const {
     user: {
       profile: { fullName, avatarUrl },
     },
   } = useAuthStore();
+  const { threadId } = useParams<{ threadId: string }>();
+  const queryClient = useQueryClient();
 
   const [previewURL, setPreviewURL] = useState<string | null>(null);
   const inputFileRef = useRef<HTMLInputElement | null>(null);
@@ -30,9 +33,9 @@ export default function CreateThread() {
     handleSubmit,
     reset,
     formState: { errors, isValid },
-  } = useForm<CreateThreadSchemaDTO>({
+  } = useForm<CreateReplySchemaDTO>({
     mode: 'onChange',
-    resolver: zodResolver(createThreadSchema),
+    resolver: zodResolver(createReplySchema),
     defaultValues: { content: '', images: undefined },
   });
 
@@ -42,24 +45,28 @@ export default function CreateThread() {
     ...restRegisterImages
   } = register('images');
 
-  const queryClient = useQueryClient();
-
   function onClickFile() {
     inputFileRef?.current?.click();
   }
 
   const { isPending, mutateAsync } = useMutation<
-    ThreadResponse,
+    RepliesResponse,
     Error,
-    CreateThreadSchemaDTO
+    CreateReplySchemaDTO
   >({
-    mutationKey: ['create-threads'],
-    mutationFn: async (data: CreateThreadSchemaDTO) => {
+    mutationKey: ['create-replies', threadId],
+    mutationFn: async (data: CreateReplySchemaDTO) => {
+      if (!threadId) throw new Error('Thread ID is missing');
+
       const formData = new FormData();
       formData.append('content', data.content);
       formData.append('images', data.images[0]);
+      console.log('🔹 Data yang dikirim ke API:', Object.fromEntries(formData));
 
-      const response = await api.post<ThreadResponse>('/threads', formData);
+      const response = await api.post<RepliesResponse>(
+        `/replies/${threadId}`,
+        formData
+      );
       return response.data;
     },
     onError: (error) => {
@@ -77,7 +84,7 @@ export default function CreateThread() {
     },
     onSuccess: async (data) => {
       await queryClient.invalidateQueries({
-        queryKey: ['threads'],
+        queryKey: ['threads', threadId],
       });
 
       toaster.create({
@@ -87,7 +94,7 @@ export default function CreateThread() {
     },
   });
 
-  async function onSubmit(data: CreateThreadSchemaDTO) {
+  async function onSubmit(data: CreateReplySchemaDTO) {
     await mutateAsync(data);
     reset();
     setPreviewURL('');
@@ -123,7 +130,7 @@ export default function CreateThread() {
 
         <Field.Root invalid={!!errors.content?.message}>
           <TextareaWithAutoHeight
-            placeholder="What is happening?!"
+            placeholder="Type your reply!"
             outline={'none'}
             border={'none'}
             borderColor={'outline'}

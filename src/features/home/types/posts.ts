@@ -1,5 +1,9 @@
-export type UserPost = {
+export type Profile = {
   fullName: string;
+};
+
+export type UserPost = {
+  profile: Profile;
   username: string;
   avatarUrl: string;
 };
@@ -7,7 +11,9 @@ export type UserPost = {
 export type Reply = {
   id: string;
   user: UserPost;
+  userId: string;
   content: string;
+  images?: string;
   likesCount: number;
   createdAt: Date;
 };
@@ -19,7 +25,7 @@ export type Thread = {
   images?: string;
   likesCount: number;
   repliesCount: number;
-  replies?: Reply[];
+  replies: Reply[];
   isLiked: boolean;
   createdAt: Date;
 };

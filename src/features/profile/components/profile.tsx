@@ -3,21 +3,34 @@ import EditProfile from '@/components/layouts/edit-profile';
 import { Avatar } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import CardThreadProfile from '@/features/home/components/card-thread-profile';
+import { Thread } from '@/features/home/types/posts';
+import { api } from '@/libs/api';
 import { useAuthStore } from '@/stores/auth';
-import { postDatas } from '@/utils/fake-datas/posts';
 import { Box, Flex, Image, Text } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 
 export default function Profile() {
   const {
+    id: userId,
     username,
-    profile: { followersCount, followingsCount, fullName, avatarUrl, bio },
+    followingsCount,
+    followersCount,
+    profile: { fullName, avatarUrl, bio },
   } = useAuthStore((state) => state.user);
 
-  const userPosts = postDatas.filter((post) => post.user.username);
+  console.log('user yg login', userId);
+
+  const { data: posts } = useQuery<Thread[]>({
+    queryKey: ['userPosts', userId],
+    queryFn: async () => {
+      const response = await api.get(`/threads/user/${userId}`);
+      return response.data;
+    },
+    enabled: !!userId,
+  });
 
   return (
     <Box
-      height={'100vh'}
       display={'flex'}
       flexDirection={'column'}
       gap={'16px'}
@@ -64,21 +77,19 @@ export default function Profile() {
       </Text>
       <Text>{bio || 'No bio available'}</Text>
       <Flex gap={'4px'}>
-        <Text>{followingsCount}</Text>
-        <Text color={'gray.400'}>Following</Text>
         <Text>{followersCount}</Text>
         <Text color={'gray.400'}>Followers</Text>
+        <Text>{followingsCount}</Text>
+        <Text color={'gray.400'}>Following</Text>
       </Flex>
-      {userPosts.length > 0 ? (
-        userPosts
-          .filter((user) => user.user.username == 'iqbal_hasbi')
-          .map((postData) => (
-            <CardThreadProfile
-              margin={'0px -30px 0px -30px'}
-              key={postData.id}
-              postData={postData}
-            />
-          ))
+      {(posts ?? []).length > 0 ? (
+        (posts ?? []).map((postData) => (
+          <CardThreadProfile
+            margin={'0px -30px 0px -30px'}
+            key={postData.id}
+            postData={postData}
+          />
+        ))
       ) : (
         <Text>No posts yet.</Text>
       )}

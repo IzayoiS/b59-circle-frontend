@@ -1,14 +1,22 @@
 import arrowLeftLogo from '@/assets/icons/arrow-left.svg';
 import { Button } from '@/components/ui/button';
 import UserProfile from '@/features/profile/components/user-profile';
-import { searchUserDatas } from '@/utils/fake-datas/search-users';
+import { api } from '@/libs/api';
 import { Box, Image, Text } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router-dom';
 
 export default function UserProfilePage() {
   const navigate = useNavigate();
-  const { userId } = useParams<{ userId: string }>();
-  const user = searchUserDatas.find((u) => u.username === userId);
+  const { username } = useParams<{ username: string }>();
+  const { data: user } = useQuery({
+    queryKey: ['user-profile', username],
+    queryFn: async () => {
+      const res = await api.get(`/users/username/${username}`);
+      return res.data;
+    },
+    enabled: !!username,
+  });
 
   function onBack() {
     navigate(-1);

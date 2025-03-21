@@ -2,108 +2,38 @@ import likeLogoOutline from '@/assets/icons/like-outline.svg';
 import likeLogo from '@/assets/icons/like.svg';
 import replyLogoOutline from '@/assets/icons/reply-outline.svg';
 import { Avatar } from '@/components/ui/avatar';
-import { toaster } from '@/components/ui/toaster';
-import { api } from '@/libs/api';
+import { useLike } from '@/hooks/useLike';
+import { useAuthStore } from '@/stores/auth';
 import {
   CreateLikeSchemaDTO,
   DeleteLikeSchemaDTO,
 } from '@/utils/schemas/like.schema';
 import { Box, BoxProps, Button, Image, Text } from '@chakra-ui/react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { isAxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Thread } from '../types/posts';
 
 interface CardThreadProps extends BoxProps {
   threadData: Thread;
 }
-interface LikeResponse {
-  message: string;
-  data: {
-    id: string;
-    userId: string;
-    threadId: string;
-    createdAt: string;
-    updatedAt: string;
-  };
-}
 
 export default function CardThread({ threadData }: CardThreadProps) {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
-
-  // const [, forceUpdate] = useReducer((state) => state + 1, 0);
+  const { user: userLogin } = useAuthStore();
 
   function onClickCard() {
     navigate(`/detail/${threadData.id}`);
   }
 
   function goToProfile() {
-    navigate(`/profile/${threadData.user.username}`);
+    if (threadData.user.username === userLogin.username) {
+      navigate('/profile');
+    } else {
+      navigate(`/profile/${threadData.user.username}`);
+    }
   }
 
-  const { isPending: isPendingLike, mutateAsync: mutateLike } = useMutation<
-    LikeResponse,
-    Error,
-    CreateLikeSchemaDTO
-  >({
-    mutationKey: ['like'],
-    mutationFn: async (data: CreateLikeSchemaDTO) => {
-      const response = await api.post<LikeResponse>('/likes', data);
-      return response.data;
-    },
-    onError: (error) => {
-      if (isAxiosError(error)) {
-        return toaster.create({
-          title: error.response?.data.message,
-          type: 'error',
-        });
-      }
-
-      toaster.create({
-        title: 'Something went wrong!',
-        type: 'error',
-      });
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ['threads'],
-      });
-    },
-  });
-
-  const { isPending: isPendingUnlike, mutateAsync: mutateUnlike } = useMutation<
-    LikeResponse,
-    Error,
-    DeleteLikeSchemaDTO
-  >({
-    mutationKey: ['unlike'],
-    mutationFn: async (data: DeleteLikeSchemaDTO) => {
-      const response = await api.delete<LikeResponse>(
-        `/likes/${data.threadId}`
-      );
-      return response.data;
-    },
-    onError: (error) => {
-      console.log(error);
-      if (isAxiosError(error)) {
-        return toaster.create({
-          title: error.response?.data.message,
-          type: 'error',
-        });
-      }
-
-      toaster.create({
-        title: 'Something went wrong!',
-        type: 'error',
-      });
-    },
-    onSuccess: async () => {
-      await queryClient.invalidateQueries({
-        queryKey: ['threads'],
-      });
-    },
-  });
+  const { isPendingLike, isPendingUnlike, mutateLike, mutateUnlike } =
+    useLike();
 
   async function onLike(data: CreateLikeSchemaDTO) {
     await mutateLike(data);
@@ -122,8 +52,13 @@ export default function CardThread({ threadData }: CardThreadProps) {
       padding={'16px 20px'}
     >
       <Avatar
-        name={threadData.user.fullName}
-        src={threadData.user.avatarUrl}
+        name={threadData.user.profile.fullName}
+        onClick={goToProfile}
+        cursor={'pointer'}
+        src={
+          threadData.user.avatarUrl ||
+          `https://api.dicebear.com/9.x/micah/svg?seed=${threadData.user.profile.fullName}`
+        }
         shape="full"
         size="full"
         width={'40px'}
@@ -138,7 +73,7 @@ export default function CardThread({ threadData }: CardThreadProps) {
             cursor={'pointer'}
             _hover={{ textDecoration: 'underline' }}
           >
-            {threadData.user.fullName}
+            {threadData.user.profile.fullName}
           </Text>
           <Text color={'secondary'} onClick={goToProfile} cursor={'pointer'}>
             @{threadData.user.username}
@@ -180,10 +115,6 @@ export default function CardThread({ threadData }: CardThreadProps) {
                 : onLike({ threadId: threadData.id })
             }
             disabled={isPendingLike || isPendingUnlike}
-            // onClick={() => {
-            //   threadData.isLiked = !threadData.isLiked;
-            //   forceUpdate();
-            // }}
           >
             <Image
               src={threadData.isLiked ? likeLogo : likeLogoOutline}
@@ -207,6 +138,7 @@ export default function CardThread({ threadData }: CardThreadProps) {
                 color: 'blue.400',
               },
             }}
+            onClick={onClickCard}
           >
             <Image src={replyLogoOutline} width={'27px'} />
             <Text color={'secondary'}>{threadData.repliesCount}</Text>

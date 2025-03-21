@@ -7,7 +7,9 @@ import { useAuthStore } from '@/stores/auth';
 export default function ProfileCard() {
   const {
     username,
-    profile: { followersCount, followingsCount, fullName, avatarUrl, bio },
+    followingsCount,
+    followersCount,
+    profile: { fullName, avatarUrl, bio },
   } = useAuthStore((state) => state.user);
 
   return (
@@ -36,10 +38,10 @@ export default function ProfileCard() {
         </Text>
         <Text>{bio || 'No bio available'}</Text>
         <Flex gap={'4px'}>
-          <Text>{followingsCount}</Text>
-          <Text color={'gray.400'}>Following</Text>
           <Text>{followersCount}</Text>
           <Text color={'gray.400'}>Followers</Text>
+          <Text>{followingsCount}</Text>
+          <Text color={'gray.400'}>Following</Text>
         </Flex>
       </Card.Body>
     </Card.Root>

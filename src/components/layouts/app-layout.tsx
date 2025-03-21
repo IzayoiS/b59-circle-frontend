@@ -4,9 +4,11 @@ import InstagramLogo from '@/assets/icons/instagram.svg';
 import LinkedinLogo from '@/assets/icons/linkedin.svg';
 import Logout from '@/assets/icons/logout.svg';
 import Logo from '@/assets/logo.svg';
+import { fetchSuggestedUsers } from '@/features/home/services/userService';
+import { SearchUser } from '@/features/search-users/types/search-user';
+import { api } from '@/libs/api';
 import { useAuthStore } from '@/stores/auth';
 import { NAV_LINK_MENU } from '@/utils/constants/nav-link-menu';
-import { searchUserDatas } from '@/utils/fake-datas/search-users';
 import {
   Box,
   BoxProps,
@@ -18,6 +20,9 @@ import {
   Image,
   Text,
 } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
+import Cookies from 'js-cookie';
+import { useEffect, useState } from 'react';
 import {
   Link,
   Navigate,
@@ -28,16 +33,9 @@ import {
 import CreatePost from './create-post-dialog';
 import ProfileCard from './profile-card';
 import SuggestedFollowing from './suggest-following';
-import Cookies from 'js-cookie';
-import { useQuery } from '@tanstack/react-query';
-import { api } from '@/libs/api';
 
 export default function AppLayout() {
-  const {
-    user: { username },
-    setUser,
-    logout,
-  } = useAuthStore();
+  const { user, setUser, logout } = useAuthStore();
 
   const { isFetched } = useQuery({
     queryKey: ['check-auth'],
@@ -65,7 +63,7 @@ export default function AppLayout() {
   });
 
   if (isFetched) {
-    if (!username) return <Navigate to={'/login'} />;
+    if (!user?.username) return <Navigate to={'/login'} />;
 
     return (
       <Grid templateColumns="repeat(4,1fr)" height={'100vh'}>
@@ -78,7 +76,12 @@ export default function AppLayout() {
         </GridItem>
 
         <GridItem>
-          <RightBar width={'563px'} position={'sticky'} top={'0'} />
+          <RightBar
+            width={'563px'}
+            position={'sticky'}
+            top={'0'}
+            loggedInUserId={user.id}
+          />
         </GridItem>
       </Grid>
     );
@@ -163,11 +166,24 @@ function LeftBar(props: BoxProps) {
     </Box>
   );
 }
-function RightBar(props: BoxProps) {
+
+function RightBar({
+  loggedInUserId,
+  ...props
+}: { loggedInUserId: string } & BoxProps) {
   const location = useLocation();
-  const navigate = useNavigate();
 
   const isProfilePage = location.pathname.startsWith('/profile');
+  const [suggestedUsers, setSuggestedUsers] = useState<SearchUser[]>([]);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    async function getUsers() {
+      const users = await fetchSuggestedUsers(loggedInUserId);
+      setSuggestedUsers(users);
+    }
+    getUsers();
+  }, [loggedInUserId]);
 
   return (
     <Box
@@ -191,16 +207,13 @@ function RightBar(props: BoxProps) {
           >
             Suggested For You
           </Text>
-          {searchUserDatas
-            .filter((user) => user.username !== 'iqbal_hasbi')
-            .slice(0, 5)
-            .map((user) => (
-              <SuggestedFollowing
-                key={user.id}
-                SuggestedFollowingUser={user}
-                goToProfile={(username) => navigate(`/profile/${username}`)}
-              />
-            ))}
+          {suggestedUsers.map((user) => (
+            <SuggestedFollowing
+              key={user.id}
+              SuggestedFollowingUser={user}
+              goToProfile={(username) => navigate(`/profile/${username}`)}
+            />
+          ))}
         </Card.Body>
       </Card.Root>
       <Card.Root backgroundColor={'card'} width={'483px'}>

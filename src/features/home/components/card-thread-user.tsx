@@ -32,7 +32,7 @@ export default function CardThreadUser({
       {...boxProps}
     >
       <Avatar
-        name={postData.user.fullName}
+        name={postData.user.profile.fullName}
         src={postData.user.avatarUrl}
         shape="full"
         size="full"
@@ -42,7 +42,7 @@ export default function CardThreadUser({
 
       <Box display={'flex'} flexDirection={'column'} gap={'4px'}>
         <Box display={'flex'} gap={'4px'}>
-          <Text fontWeight={'medium'}>{postData.user.fullName}</Text>
+          <Text fontWeight={'medium'}>{postData.user.profile.fullName}</Text>
           <Text color={'secondary'}>@{postData.user.username}</Text>
           <Text color={'secondary'}>•</Text>
           <Text color={'secondary'}>{postData.createdAt.getHours()}h</Text>

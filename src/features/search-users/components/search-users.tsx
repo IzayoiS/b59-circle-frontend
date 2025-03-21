@@ -82,22 +82,20 @@ export default function SearchUsers() {
         </Flex>
       )}
 
-      {/* {isLoading ? (
-        <Spinner />
-      ) : (
-        <>
-          {users?.map((user) => (
-            <SearchUserCard searchUserData={user} key={user.id} />
-          ))}
-        </>
-      )} */}
-
       {isLoading && <Spinner />}
 
       {searchTextDebounced && users.length > 0 && (
         <Box marginTop={'20px'}>
-          {users.map((user) => (
-            <SearchUserCard searchUserData={user} key={user.id} />
+          {users.map((follower) => (
+            <SearchUserCard
+              searchUserData={{
+                ...follower,
+                isFollowed: follower.isFollowed,
+                followedId: follower.id,
+              }}
+              key={follower.id}
+              isFollowingList={true}
+            />
           ))}
         </Box>
       )}

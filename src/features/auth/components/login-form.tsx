@@ -25,16 +25,16 @@ export default function LoginForm(props: BoxProps) {
         onSubmit={handleSubmit(onSubmit)}
         style={{ display: 'flex', gap: '12px', flexDirection: 'column' }}
       >
-        <Field.Root invalid={!!errors.email?.message}>
+        <Field.Root invalid={!!errors.identifier?.message}>
           <Input
             placeholder="Email/Username"
             outline={'none'}
             border={'1px solid'}
             borderColor={'outline'}
             autoComplete="off"
-            {...register('email')}
+            {...register('identifier')}
           />
-          <Field.ErrorText>{errors.email?.message}</Field.ErrorText>
+          <Field.ErrorText>{errors.identifier?.message}</Field.ErrorText>
         </Field.Root>
         <Field.Root invalid={!!errors.password?.message}>
           <Input

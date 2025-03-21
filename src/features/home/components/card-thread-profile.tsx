@@ -32,8 +32,11 @@ export default function CardThreadProfile({
       {...boxProps}
     >
       <Avatar
-        name={postData.user.fullName}
-        src={postData.user.avatarUrl}
+        name={postData.user.profile.fullName}
+        src={
+          postData.user.avatarUrl ||
+          `https://api.dicebear.com/9.x/micah/svg?seed=${postData.user.profile.fullName}`
+        }
         shape="full"
         size="full"
         width={'40px'}
@@ -42,10 +45,12 @@ export default function CardThreadProfile({
 
       <Box display={'flex'} flexDirection={'column'} gap={'4px'}>
         <Box display={'flex'} gap={'4px'}>
-          <Text fontWeight={'medium'}>{postData.user.fullName}</Text>
+          <Text fontWeight={'medium'}>{postData.user.profile.fullName}</Text>
           <Text color={'secondary'}>@{postData.user.username}</Text>
           <Text color={'secondary'}>•</Text>
-          <Text color={'secondary'}>{postData.createdAt.getHours()}h</Text>
+          <Text color={'secondary'}>
+            {new Date(postData.createdAt).getHours()}h
+          </Text>
         </Box>
         <Text cursor={'pointer'} onClick={onClickCard} fontWeight={'light'}>
           {postData.content}
