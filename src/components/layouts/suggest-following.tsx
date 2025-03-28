@@ -100,7 +100,10 @@ export default function SuggestedFollowing({
         onClick={() => goToProfile(SuggestedFollowingUser.username ?? '')}
       >
         <Avatar
-          src={`https://api.dicebear.com/9.x/micah/svg?seed=${SuggestedFollowingUser.profile.fullName}`}
+          src={
+            SuggestedFollowingUser.profile.avatarUrl ||
+            `https://api.dicebear.com/9.x/micah/svg?seed=${SuggestedFollowingUser.profile.fullName}`
+          }
           width={'40px'}
           height={'40px'}
           marginLeft={'-10px'}
