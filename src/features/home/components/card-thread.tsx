@@ -2,15 +2,32 @@ import likeLogoOutline from '@/assets/icons/like-outline.svg';
 import likeLogo from '@/assets/icons/like.svg';
 import replyLogoOutline from '@/assets/icons/reply-outline.svg';
 import { Avatar } from '@/components/ui/avatar';
+import { toaster } from '@/components/ui/toaster';
+import { useDeleteThread } from '@/hooks/useDeleteThread';
+import { useEditThread } from '@/hooks/useEditThread';
 import { useLike } from '@/hooks/useLike';
 import { useAuthStore } from '@/stores/auth';
+import { formatTimeRelative } from '@/utils/format-date';
 import {
   CreateLikeSchemaDTO,
   DeleteLikeSchemaDTO,
 } from '@/utils/schemas/like.schema';
-import { Box, BoxProps, Button, Image, Text } from '@chakra-ui/react';
+import {
+  Box,
+  BoxProps,
+  Button,
+  IconButton,
+  Image,
+  Text,
+} from '@chakra-ui/react';
+import { isAxiosError } from 'axios';
+import { useState } from 'react';
+import { AiOutlineDelete } from 'react-icons/ai';
+import { FaRegCheckCircle, FaWindowClose } from 'react-icons/fa';
+import { MdOutlineEdit } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { Thread } from '../types/posts';
+import { TextareaWithAutoHeight } from './TextareaWithAutoHeight';
 
 interface CardThreadProps extends BoxProps {
   threadData: Thread;
@@ -19,6 +36,11 @@ interface CardThreadProps extends BoxProps {
 export default function CardThread({ threadData }: CardThreadProps) {
   const navigate = useNavigate();
   const { user: userLogin } = useAuthStore();
+  const [editedContent, setEditedContent] = useState(threadData.content);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const editThread = useEditThread(threadData.id, threadData.userId);
+  const deleteThread = useDeleteThread(threadData.id, threadData.userId);
 
   function onClickCard() {
     navigate(`/detail/${threadData.id}`);
@@ -43,6 +65,48 @@ export default function CardThread({ threadData }: CardThreadProps) {
     await mutateUnlike(data);
   }
 
+  async function handleEdit() {
+    try {
+      const response = await editThread.mutateAsync(editedContent);
+
+      toaster.create({
+        title: response.message,
+        type: 'success',
+      });
+      setIsEditing(false);
+    } catch (error) {
+      if (isAxiosError(error)) {
+        return toaster.create({
+          title: error.response?.data.message,
+          type: 'error',
+        });
+      }
+    }
+  }
+
+  async function handleDelete() {
+    const isConfirmed = window.confirm(
+      'Are you sure you want to delete this thread?'
+    );
+
+    if (!isConfirmed) return;
+
+    try {
+      const response = await deleteThread.mutateAsync();
+      toaster.create({
+        title: response.message,
+        type: 'success',
+      });
+    } catch (error) {
+      if (isAxiosError(error)) {
+        return toaster.create({
+          title: error.response?.data.message,
+          type: 'error',
+        });
+      }
+    }
+  }
+
   return (
     <Box
       display={'flex'}
@@ -56,7 +120,7 @@ export default function CardThread({ threadData }: CardThreadProps) {
         onClick={goToProfile}
         cursor={'pointer'}
         src={
-          threadData.user.avatarUrl ||
+          threadData.user.profile.avatarUrl ||
           `https://api.dicebear.com/9.x/micah/svg?seed=${threadData.user.profile.fullName}`
         }
         shape="full"
@@ -80,12 +144,25 @@ export default function CardThread({ threadData }: CardThreadProps) {
           </Text>
           <Text color={'secondary'}>•</Text>
           <Text color={'secondary'}>
-            {new Date(threadData.createdAt).getHours()}h
+            {formatTimeRelative(new Date(threadData.createdAt))}
           </Text>
         </Box>
-        <Text cursor={'pointer'} onClick={onClickCard} fontWeight={'light'}>
-          {threadData.content}
-        </Text>
+
+        {isEditing ? (
+          <TextareaWithAutoHeight
+            value={editedContent}
+            onChange={(e) => setEditedContent(e.target.value)}
+            size="sm"
+            outline={'none'}
+            border={'1px solid'}
+            borderColor={'outline'}
+          />
+        ) : (
+          <Text cursor={'pointer'} onClick={onClickCard} fontWeight={'light'}>
+            {threadData.content}
+          </Text>
+        )}
+
         <Image
           objectFit={'contain'}
           maxHeight={'300px'}
@@ -146,6 +223,55 @@ export default function CardThread({ threadData }: CardThreadProps) {
           </Button>
         </Box>
       </Box>
+      {userLogin.id === threadData.userId && (
+        <Box marginLeft="auto" display="flex" gap="5px">
+          {!isEditing ? (
+            <>
+              <IconButton
+                aria-label="Edit thread"
+                size="sm"
+                variant={'ghost'}
+                onClick={() => setIsEditing(true)}
+              >
+                <MdOutlineEdit />
+              </IconButton>
+              <IconButton
+                aria-label="Delete thread"
+                size="sm"
+                colorScheme="red"
+                variant={'ghost'}
+                onClick={handleDelete}
+              >
+                <AiOutlineDelete />
+              </IconButton>
+            </>
+          ) : (
+            <>
+              <IconButton
+                aria-label="Save edit"
+                size="sm"
+                colorScheme="green"
+                variant={'ghost'}
+                onClick={handleEdit}
+              >
+                <FaRegCheckCircle />
+              </IconButton>
+              <IconButton
+                aria-label="Cancel edit"
+                size="sm"
+                colorScheme="gray"
+                variant={'ghost'}
+                onClick={() => {
+                  setIsEditing(false);
+                  setEditedContent(threadData.content);
+                }}
+              >
+                <FaWindowClose />
+              </IconButton>
+            </>
+          )}
+        </Box>
+      )}
     </Box>
   );
 }

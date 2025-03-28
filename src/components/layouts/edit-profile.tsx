@@ -10,19 +10,21 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { useAuthStore } from '@/stores/auth';
-import { Box, Flex, Image, Input, Textarea } from '@chakra-ui/react';
+import { Box, Flex, Image, Input, Spinner, Textarea } from '@chakra-ui/react';
 import { useRef, useState } from 'react';
 import { Avatar } from '../ui/avatar';
 import { Button } from '../ui/button';
-import { editProfileSchemaDTO } from '@/utils/schemas/profile.schema';
 import { api } from '@/libs/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { isAxiosError } from 'axios';
+import { toaster } from '../ui/toaster';
 
 export default function EditProfile() {
   const { user, setUser } = useAuthStore();
   const inputFileRef = useRef<HTMLInputElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const [formData, setFormData] = useState({
     fullName: user.profile.fullName || '',
@@ -31,14 +33,40 @@ export default function EditProfile() {
   });
 
   const mutation = useMutation({
-    mutationFn: async (updatedData: editProfileSchemaDTO) => {
-      const response = await api.patch(`/profile/${user.id}`, updatedData);
+    mutationFn: async () => {
+      const formDataPayload = new FormData();
+      formDataPayload.append('fullName', formData.fullName);
+      formDataPayload.append('username', formData.username);
+      formDataPayload.append('bio', formData.bio);
+      if (selectedFile) {
+        formDataPayload.append('avatar', selectedFile);
+      }
+      console.log(`Sending request to: /profile/${user?.id}`);
+
+      const response = await api.patch(`/profile/${user.id}`, formDataPayload);
       return response.data;
     },
     onSuccess: (updatedUser) => {
       setUser(updatedUser);
       queryClient.invalidateQueries({ queryKey: ['user-profile', user.id] });
       setIsOpen(false);
+      toaster.create({
+        title: updatedUser.message,
+        type: 'success',
+      });
+    },
+    onError: (error) => {
+      if (isAxiosError(error)) {
+        return toaster.create({
+          title: error.response?.data?.message,
+          type: 'error',
+        });
+      } else {
+        toaster.create({
+          title: 'Something went wrong!',
+          type: 'error',
+        });
+      }
     },
   });
 
@@ -54,7 +82,14 @@ export default function EditProfile() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    mutation.mutate(formData);
+    mutation.mutate();
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+    }
   };
 
   return (
@@ -68,7 +103,6 @@ export default function EditProfile() {
           color={'white'}
           borderRadius={'20px'}
           _hover={{ backgroundColor: 'gray.600', transition: 'ease 0.4s' }}
-          onClick={() => setIsOpen(true)}
         >
           Edit Profile
         </Button>
@@ -91,8 +125,10 @@ export default function EditProfile() {
             >
               <Avatar
                 src={
-                  user.profile.avatarUrl ||
-                  `https://api.dicebear.com/9.x/micah/svg?seed=${formData.fullName}`
+                  selectedFile
+                    ? URL.createObjectURL(selectedFile)
+                    : user.profile.avatarUrl ||
+                      `https://api.dicebear.com/9.x/micah/svg?seed=${formData.fullName}`
                 }
                 width="100%"
                 height="100%"
@@ -100,8 +136,11 @@ export default function EditProfile() {
               />
 
               <Box
-                as="button"
-                onClick={onClickFile}
+                as="div"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onClickFile();
+                }}
                 position="absolute"
                 top="50%"
                 left="50%"
@@ -119,7 +158,13 @@ export default function EditProfile() {
               >
                 <Image src={editProfileLogo} width="80%" height="80%" />
               </Box>
-              <Input type="file" ref={inputFileRef} display="none" />
+              <Input
+                type="file"
+                ref={inputFileRef}
+                display="none"
+                accept="image/*"
+                onChange={handleFileChange}
+              />
             </Box>
             <Flex direction={'column'} gap={'12px'}>
               <Box position="relative">
@@ -212,10 +257,9 @@ export default function EditProfile() {
                 height={'33px'}
                 left={'86%'}
                 type="submit"
-                onClick={handleSubmit}
-                loading={mutation.isPending}
+                disabled={mutation.isPending}
               >
-                Save
+                {mutation.isPending ? <Spinner /> : 'Save'}
               </Button>
             </Flex>
           </form>

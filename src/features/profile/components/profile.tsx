@@ -18,8 +18,6 @@ export default function Profile() {
     profile: { fullName, avatarUrl, bio },
   } = useAuthStore((state) => state.user);
 
-  console.log('user yg login', userId);
-
   const { data: posts } = useQuery<Thread[]>({
     queryKey: ['userPosts', userId],
     queryFn: async () => {

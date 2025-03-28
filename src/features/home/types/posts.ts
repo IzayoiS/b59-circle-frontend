@@ -1,11 +1,11 @@
 export type Profile = {
   fullName: string;
+  avatarUrl: string;
 };
 
 export type UserPost = {
   profile: Profile;
   username: string;
-  avatarUrl: string;
 };
 
 export type Reply = {
@@ -21,6 +21,7 @@ export type Reply = {
 export type Thread = {
   id: string;
   user: UserPost;
+  userId: string;
   content: string;
   images?: string;
   likesCount: number;

@@ -1,7 +1,8 @@
 import CoverProfile from '@/assets/icons/cover.svg';
 import { Avatar } from '@/components/ui/avatar';
 import FollowButton from '@/features/follows/components/follow-button';
-// import CardThreadUser from '@/features/home/components/card-thread-user';
+import CardThreadUser from '@/features/home/components/card-thread-user';
+import { Thread } from '@/features/home/types/posts';
 import { api } from '@/libs/api';
 import {
   Box,
@@ -28,14 +29,14 @@ export default function UserProfile() {
     await refetch();
   };
 
-  // const { data: userPosts = [] } = useQuery({
-  //   queryKey: ['user-posts', user?.id],
-  //   queryFn: async () => {
-  //     const res = await api.get(`/posts?userId=${user?.id}`);
-  //     return res.data;
-  //   },
-  //   enabled: !!user?.id,
-  // });
+  const { data: userPosts = [] } = useQuery<Thread[]>({
+    queryKey: ['user-posts', user?.id],
+    queryFn: async () => {
+      const res = await api.get(`/threads/user/${user?.id}`);
+      return res.data;
+    },
+    enabled: !!user?.id,
+  });
 
   if (!user) {
     return (
@@ -90,8 +91,8 @@ export default function UserProfile() {
         <Text color={'gray.400'}>Following</Text>
       </Flex>
 
-      {/* {userPosts.length > 0 ? (
-        userPosts.map((postData) => (
+      {(userPosts ?? []).length > 0 ? (
+        (userPosts ?? []).map((postData) => (
           <CardThreadUser
             margin={'0px -30px 0px -30px'}
             key={postData.id}
@@ -100,7 +101,7 @@ export default function UserProfile() {
         ))
       ) : (
         <Text>No posts yet.</Text>
-      )} */}
+      )}
     </Box>
   );
 }

@@ -25,7 +25,7 @@ export default function CardReply({ replyData }: CardReplyProps) {
       <Avatar
         name={replyData.user.profile.fullName || 'Unknown User'}
         src={
-          replyData.user.avatarUrl ||
+          replyData.user.profile.avatarUrl ||
           `https://api.dicebear.com/9.x/micah/svg?seed=${replyData.user.profile.fullName}`
         }
         shape="full"

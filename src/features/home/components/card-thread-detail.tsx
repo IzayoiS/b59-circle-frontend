@@ -44,7 +44,7 @@ export default function CardThreadDetail({ postData }: CardThreadDetailProps) {
         <Avatar
           name={postData?.user.profile.fullName}
           src={
-            postData?.user.avatarUrl ||
+            postData?.user.profile.avatarUrl ||
             `https://api.dicebear.com/9.x/micah/svg?seed=${postData?.user.profile.fullName}`
           }
           shape="full"
