@@ -4,8 +4,6 @@ import InstagramLogo from '@/assets/icons/instagram.svg';
 import LinkedinLogo from '@/assets/icons/linkedin.svg';
 import Logout from '@/assets/icons/logout.svg';
 import Logo from '@/assets/logo.svg';
-import { fetchSuggestedUsers } from '@/features/home/services/userService';
-import { SearchUser } from '@/features/search-users/types/search-user';
 import { api } from '@/libs/api';
 import { useAuthStore } from '@/stores/auth';
 import { NAV_LINK_MENU } from '@/utils/constants/nav-link-menu';
@@ -18,11 +16,11 @@ import {
   Grid,
   GridItem,
   Image,
+  Spinner,
   Text,
 } from '@chakra-ui/react';
 import { useQuery } from '@tanstack/react-query';
 import Cookies from 'js-cookie';
-import { useEffect, useState } from 'react';
 import {
   Link,
   Navigate,
@@ -30,9 +28,11 @@ import {
   useLocation,
   useNavigate,
 } from 'react-router-dom';
+import { useSuggestedUsers } from '../hooks/useSuggestedUsers';
 import CreatePost from './create-post-dialog';
 import ProfileCard from './profile-card';
 import SuggestedFollowing from './suggest-following';
+import { SearchUser } from '@/features/search-users/types/search-user';
 
 export default function AppLayout() {
   const { user, setUser, logout } = useAuthStore();
@@ -174,16 +174,14 @@ function RightBar({
   const location = useLocation();
 
   const isProfilePage = location.pathname.startsWith('/profile');
-  const [suggestedUsers, setSuggestedUsers] = useState<SearchUser[]>([]);
+  // const [suggestedUsers, setSuggestedUsers] = useState<SearchUser[]>([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    async function getUsers() {
-      const users = await fetchSuggestedUsers(loggedInUserId);
-      setSuggestedUsers(users);
-    }
-    getUsers();
-  }, [loggedInUserId]);
+  const {
+    data: suggestedUsers,
+    isLoading,
+    isError,
+  } = useSuggestedUsers(loggedInUserId);
 
   return (
     <Box
@@ -200,6 +198,11 @@ function RightBar({
 
       <Card.Root backgroundColor={'card'} width={'483px'}>
         <Card.Body gap={'7px'}>
+          {isError && <Text color="red.500">Failed to load suggestions</Text>}
+
+          {!isLoading && !isError && suggestedUsers?.length === 0 && (
+            <Text color={'gray.500'}>No suggestions available</Text>
+          )}
           <Text
             fontSize={'20px'}
             fontWeight={'bold'}
@@ -207,15 +210,19 @@ function RightBar({
           >
             Suggested For You
           </Text>
-          {suggestedUsers.map((user) => (
-            <SuggestedFollowing
-              key={user.id}
-              SuggestedFollowingUser={user}
-              goToProfile={(username) => navigate(`/profile/${username}`)}
-            />
-          ))}
+          {isLoading && <Spinner margin={'auto'} />}
+          {!isLoading &&
+            !isError &&
+            suggestedUsers?.map((user: SearchUser) => (
+              <SuggestedFollowing
+                key={user.id}
+                SuggestedFollowingUser={user}
+                goToProfile={(username) => navigate(`/profile/${username}`)}
+              />
+            ))}
         </Card.Body>
       </Card.Root>
+
       <Card.Root backgroundColor={'card'} width={'483px'}>
         <Flex
           gap={'8px'}
