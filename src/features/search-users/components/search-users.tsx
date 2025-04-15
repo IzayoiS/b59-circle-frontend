@@ -59,8 +59,8 @@ export default function SearchUsers() {
           onChange={handleChange}
         />
       </InputGroup>
-
-      {!searchTextDebounced && (
+      {!searchTextDebounced && isLoading && <Spinner />}{' '}
+      {
         <Flex
           justify={'center'}
           direction={'column'}
@@ -80,10 +80,7 @@ export default function SearchUsers() {
             typed.
           </Text>
         </Flex>
-      )}
-
-      {isLoading && <Spinner />}
-
+      }
       {searchTextDebounced && users.length > 0 && (
         <Box marginTop={'20px'}>
           {users.map((follower) => (
@@ -99,7 +96,6 @@ export default function SearchUsers() {
           ))}
         </Box>
       )}
-
       {searchTextDebounced && !isLoading && users?.length === 0 && (
         <Flex
           justify={'center'}
