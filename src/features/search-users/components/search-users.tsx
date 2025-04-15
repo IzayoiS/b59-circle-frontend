@@ -1,12 +1,12 @@
 import SearchLogoOutline from '@/assets/icons/user-search-outline.svg';
 import { InputGroup } from '@/components/ui/input-group';
-import { Box, Flex, Image, Input, Spinner, Text } from '@chakra-ui/react';
+import { api } from '@/libs/api';
+import { Box, Flex, Image, Input, Text } from '@chakra-ui/react';
+import { useQuery } from '@tanstack/react-query';
 import React, { useEffect, useState } from 'react';
 import { useDebounce } from 'use-debounce';
 import { SearchUser } from '../types/search-user';
 import SearchUserCard from './search-user-card';
-import { useQuery } from '@tanstack/react-query';
-import { api } from '@/libs/api';
 
 export default function SearchUsers() {
   const [searchText, setSearchText] = useState<string>('');
@@ -59,8 +59,8 @@ export default function SearchUsers() {
           onChange={handleChange}
         />
       </InputGroup>
-      {!searchTextDebounced && isLoading && <Spinner />}{' '}
-      {
+
+      {!searchTextDebounced && (
         <Flex
           justify={'center'}
           direction={'column'}
@@ -80,7 +80,10 @@ export default function SearchUsers() {
             typed.
           </Text>
         </Flex>
-      }
+      )}
+
+      {/* {isLoading && <Spinner />} */}
+
       {searchTextDebounced && users.length > 0 && (
         <Box marginTop={'20px'}>
           {users.map((follower) => (
@@ -96,6 +99,7 @@ export default function SearchUsers() {
           ))}
         </Box>
       )}
+
       {searchTextDebounced && !isLoading && users?.length === 0 && (
         <Flex
           justify={'center'}
