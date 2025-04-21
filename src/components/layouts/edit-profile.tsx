@@ -132,7 +132,7 @@ export default function EditProfile() {
                   selectedFile
                     ? URL.createObjectURL(selectedFile)
                     : user.profile.avatarUrl ||
-                      `https://api.dicebear.com/9.x/micah/svg?seed=${formData.fullName}`
+                      `https://api.dicebear.com/9.x/micah/svg?seed=${user.profile.fullName}`
                 }
                 width="100%"
                 height="100%"
