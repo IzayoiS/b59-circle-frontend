@@ -16,7 +16,11 @@ import { useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { TextareaWithAutoHeight } from './TextareaWithAutoHeight';
 
-export default function CreateThread() {
+export default function CreateThread({
+  onCreateSuccess,
+}: {
+  onCreateSuccess?: () => void;
+}) {
   const {
     user: {
       profile: { fullName, avatarUrl },
@@ -59,7 +63,11 @@ export default function CreateThread() {
       formData.append('content', data.content);
       formData.append('images', data.images[0]);
 
-      const response = await api.post<ThreadResponse>('/threads', formData);
+      const response = await api.post<ThreadResponse>('/threads', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       return response.data;
     },
     onError: (error) => {
@@ -79,6 +87,7 @@ export default function CreateThread() {
       await queryClient.invalidateQueries({
         queryKey: ['threads'],
       });
+      onCreateSuccess?.();
 
       toaster.create({
         title: data.message,
@@ -88,6 +97,7 @@ export default function CreateThread() {
   });
 
   async function onSubmit(data: CreateThreadSchemaDTO) {
+    console.log('DATA:', data);
     await mutateAsync(data);
     reset();
     setPreviewURL('');

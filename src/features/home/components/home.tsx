@@ -11,6 +11,7 @@ export default function Home() {
     isLoading,
     isError,
     failureReason,
+    refetch,
   } = useQuery<Thread[]>({
     queryKey: ['threads'],
     queryFn: async () => {
@@ -21,7 +22,7 @@ export default function Home() {
 
   return (
     <Box>
-      <CreateThread />
+      <CreateThread onCreateSuccess={refetch} />
       {isError && <Text color={'red'}>{failureReason?.message}</Text>}
       {isLoading ? (
         <Box

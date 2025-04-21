@@ -43,7 +43,11 @@ export default function EditProfile() {
       }
       console.log(`Sending request to: /profile/${user?.id}`);
 
-      const response = await api.patch(`/profile/${user.id}`, formDataPayload);
+      const response = await api.patch(`/profile/${user.id}`, formDataPayload, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
       return response.data;
     },
     onSuccess: (updatedUser) => {
