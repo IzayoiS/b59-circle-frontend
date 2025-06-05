@@ -68,10 +68,15 @@ export default function AppLayout() {
     return (
       <Grid templateColumns="repeat(4,1fr)" height={'100vh'}>
         <GridItem colSpan={1}>
-          <LeftBar width={'417px'} position={'sticky'} top={'0'} />
+          <LeftBar
+            width={'417px'}
+            position={'sticky'}
+            top={'0'}
+            backgroundColor={'gray.900'}
+          />
         </GridItem>
 
-        <GridItem colSpan={2} marginLeft={'-30px'}>
+        <GridItem colSpan={2} marginLeft={'-30px'} backgroundColor={'gray.900'}>
           <Outlet />
         </GridItem>
 
@@ -81,6 +86,7 @@ export default function AppLayout() {
             position={'sticky'}
             top={'0'}
             loggedInUserId={user.id}
+            backgroundColor={'gray.900'}
           />
         </GridItem>
       </Grid>
