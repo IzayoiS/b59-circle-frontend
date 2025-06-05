@@ -72,11 +72,11 @@ export default function AppLayout() {
             width={'417px'}
             position={'sticky'}
             top={'0'}
-            backgroundColor={'gray.900'}
+            backgroundColor={'#171923'}
           />
         </GridItem>
 
-        <GridItem colSpan={2} marginLeft={'-30px'} backgroundColor={'gray.900'}>
+        <GridItem colSpan={2} marginLeft={'-30px'} backgroundColor={'#171923'}>
           <Outlet />
         </GridItem>
 
@@ -86,7 +86,7 @@ export default function AppLayout() {
             position={'sticky'}
             top={'0'}
             loggedInUserId={user.id}
-            backgroundColor={'gray.900'}
+            backgroundColor={'#171923'}
           />
         </GridItem>
       </Grid>
