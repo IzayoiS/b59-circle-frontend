@@ -69,7 +69,7 @@ export default function LoginForm(props: BoxProps) {
         </Button>
       </form>
       <Text fontWeight={'normal'}>
-        Don't have an account yet?{' '}
+        Don't have ?{' '}
         <ChakraLink asChild color={'brand'} outline={'none'}>
           <Link to={'/register'}> Create account</Link>
         </ChakraLink>
